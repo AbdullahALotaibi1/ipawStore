@@ -1,0 +1,139 @@
+.nav-link {
+    direction: rtl;
+}
+
+.navbar-nav .nav-link>.fe {
+    text-align: right;
+}
+
+.navbar-vertical .navbar-nav .nav-link[data-toggle=collapse]:after {
+    margin-right: auto;
+    margin-left: 0;
+}
+
+.navbar-vertical.navbar-expand-md .navbar-nav .nav .nav-link {
+    padding-right: 3.25rem;
+    padding-left: 26px;
+}
+
+.navbar-vertical .navbar-nav .nav .nav-link {
+    padding-rigth: 2.75rem;
+    padding-left: 0;
+}
+
+.navbar-vertical.navbar-expand-md .navbar-nav .nav-link.active:before {
+    border-right: 2px solid #2c7be5;
+    border-left: 0px;
+    left: auto;
+    right: 0;
+}
+
+.nav-link {
+    font-family: "DIN Next LT Arabic Regular";
+    font-size: 14px;
+}
+
+.nav-link .title-link {
+    margin-top: -5px;
+}
+
+.navbar-heading {
+    font-family: "DIN Next LT Arabic Regular";
+    margin-top: 10px;
+    font-size: 11px !important;
+}
+
+.navbar-nav .nav-link> svg {
+    text-align: right;
+}
+.navbar-nav .nav-link> svg {
+    display: inline-block;
+    min-width: 1.75rem;
+    margin-right: -7px;
+    margin-left: 7px;
+}
+
+.navbar-vertical.navbar-expand-md .navbar-nav .nav-link {
+    padding: 0.6rem 1.5rem;
+    margin-bottom: 5px;
+}
+
+.header-navbar-i {
+    background: #0000002b;
+    color: #fff;
+    margin-top: -12px;
+    margin-right: -21px;
+    margin-left: -21px;
+    padding: 15px;
+    direction: rtl;
+    font-family: "DIN Next LT Arabic Regular";
+    font-size: 14px;
+}
+
+.logo-header {
+    width: 25px;
+    margin-left: 10px;
+}
+
+.header-pretitle {
+    font-family: "DIN Next LT Arabic Regular";
+}
+
+.header-title {
+    font-family: "DIN Next LT Arabic Regular";
+}
+
+.btn {
+    font-family: "DIN Next LT Arabic Regular";
+}
+
+.card-header{
+    direction: rtl;
+}
+
+.search-table{
+    font-family: "DIN Next LT Arabic Regular";
+    font-size: 14px;
+    margin-top: -2px;
+}
+
+.table-live-data{
+    direction: rtl;
+    font-family: "DIN Next LT Arabic Regular";
+}
+
+.card-table tbody td:first-child, .card-table thead th:first-child {
+    padding-left: 0.0rem!important;
+}
+
+.custom-control {
+    padding-left: 0px !important;
+}
+
+.card-table tbody td:last-child, .card-table thead th:last-child{
+    padding-left: 0px !important;
+    text-align: center !important;
+
+}
+
+.table [data-sort]::after{
+    margin-right: .25rem;
+    margin-left: 0;
+}
+.table tbody td, .table tbody th, .table thead th{
+    text-align: center;
+}
+
+.form-group {
+    text-align: right;
+    font-family: "DIN Next LT Arabic Regular";
+}
+
+.form-control {
+    padding-right: 10px !important;
+}
+
+.card {
+    text-align: right;
+    font-family: "DIN Next LT Arabic Regular";
+}

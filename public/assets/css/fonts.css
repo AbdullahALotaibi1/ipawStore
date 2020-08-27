@@ -1,0 +1,23 @@
+@font-face {
+    font-family: "DIN Next LT Arabic Regular";
+    src: url("../fonts/din-next-lt/din-next-lt-w23-regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: "DIN Next LT Arabic Medium";
+    src: url("../fonts/din-next-lt/din-next-lt-w23-medium.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: "DIN Next LT Arabic Heavy";
+    src: url("../fonts/din-next-lt/DINNextLTArabic-Heavy-1.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
