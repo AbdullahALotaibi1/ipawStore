@@ -1,5 +1,3 @@
-
-
 @extends('dashboard.layouts.app')
 
 @section('title','اضافة مجموعة')
@@ -30,28 +28,20 @@
                 </div>
             </div> <!-- / .row -->
         </div>
+
         <! ============ Form
         =======================>
+
         <br>
-        @if(session()->has('appleMessage'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong>حدث خطاء في حساب المطورين:</strong>  {{ session()->get('appleMessage') }}
-            <!-- Button -->
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-        @endif
         <div class="col-lg-12 col-md-12" style="direction: rtl">
             <div class="row">
                 <div class="col-lg-9 col-md-12">
                     <!-- Form -->
-                    <form class="mb-4" action="{{ route('dashboard.groups.store') }}" method="post" enctype="multipart/form-data">
-                    @csrf
-                    @method('post')
-                    <input name="page_id" value="new" hidden>
-                    <!-- group name -->
+                    <form class="mb-4">
+
+                        <!-- Project name -->
                         <div class="form-group">
+
                             <!-- Label  -->
                             <label>
                                 اسم المجموعة
@@ -62,23 +52,7 @@
                             </small>
 
                             <!-- Input -->
-                            <div class="input-group input-group-merge">
-                                <input type="text" class="form-control form-control-prepended @error('name') is-invalid @enderror"
-                                       placeholder="مثال: مجموعة 35"
-                                       name="name"
-                                       value="{{ old('name') }}"
-                                >
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">
-                                        <i class="fas fa-pen"></i>
-                                    </div>
-                                </div>
-                                @error('name')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
+                            <input type="text" class="form-control" placeholder="Example: Pro3">
 
                         </div>
 
@@ -87,7 +61,7 @@
                         <hr class="mt-4 mb-5">
 
 
-                        <!-- upload files -->
+                        <!-- Starting files -->
                         <div class="form-group">
 
                             <!-- Label -->
@@ -104,16 +78,63 @@
                             <div class="card">
                                 <div class="card-body">
 
-                                  <div class="upload-single-file">
-                                      <input type="file" accept="application/x-pkcs12" name="file_p12">
-                                      <p class="message-upload-file">قم بضغط هنا لرفع ملف p12 </p>
-                                  </div>
+                                    <!-- Dropzone -->
+                                    <div class="dropzone dropzone-multiple" data-toggle="dropzone" data-options='{"url": "https://"}'>
 
-                                    @error('file_p12')
-                                    <div class="invalid-feedback" style="display: block">
-                                        {{ $message }}
+                                        <!-- Fallback -->
+                                        <div class="fallback">
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input" id="customFileUpload" multiple>
+                                                <label class="custom-file-label" for="customFileUpload">Choose file</label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Preview -->
+                                        <ul class="dz-preview dz-preview-multiple list-group list-group-lg list-group-flush">
+                                            <li class="list-group-item">
+                                                <div class="row align-items-center">
+                                                    <div class="col-auto">
+
+                                                        <!-- Image -->
+                                                        <div class="avatar">
+                                                            <img class="avatar-img rounded" src="data:image/svg+xml,%3csvg3c/svg%3e" alt="..." data-dz-thumbnail>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col ml-n3">
+
+                                                        <!-- Heading -->
+                                                        <h4 class="mb-1" data-dz-name>...</h4>
+
+                                                        <!-- Text -->
+                                                        <p class="small text-muted mb-0" data-dz-size></p>
+
+                                                    </div>
+                                                    <div class="col-auto">
+
+                                                        <!-- Dropdown -->
+                                                        <div class="dropdown">
+
+                                                            <!-- Toggle -->
+                                                            <a href="#" class="dropdown-ellipses dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                <i class="fe fe-more-vertical"></i>
+                                                            </a>
+
+                                                            <!-- Menu -->
+                                                            <div class="dropdown-menu dropdown-menu-right">
+                                                                <a href="#" class="dropdown-item" data-dz-remove>
+                                                                    Remove
+                                                                </a>
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+
                                     </div>
-                                    @enderror
                                 </div>
                             </div>
                         </div>
@@ -136,30 +157,13 @@
                                     </small>
 
                                     <!-- Input -->
-                                    <div class="input-group input-group-merge">
-                                        <input type="text" class="form-control form-control-prepended @error('apple_email') is-invalid @enderror"
-                                               placeholder="مثال: apple@email.com"
-                                               name="apple_email"
-                                               value="{{ old('apple_email') }}"
-                                        >
-                                        <div class="input-group-prepend">
-                                            <div class="input-group-text">
-                                                <i class="fas fa-envelope"></i>
-                                            </div>
-                                        </div>
+                                    <input type="text" class="form-control" placeholder="Example: apple@gmail.com">
 
-                                        @error('apple_email')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-
-
-                                    </div>
                                 </div>
 
                             </div>
                             <div class="col-12 col-md-6">
+
                                 <!-- Start date -->
                                 <div class="form-group">
 
@@ -172,24 +176,10 @@
                                     </small>
 
                                     <!-- Input -->
-                                    <div class="input-group input-group-merge">
-                                        <input type="text" class="form-control form-control-prepended @error('apple_password') is-invalid @enderror"
-                                               placeholder="**********"
-                                               name="apple_password"
-                                               value="{{ old('apple_password') }}"
-                                        >
-                                        <div class="input-group-prepend">
-                                            <div class="input-group-text">
-                                                <i class="fas fa-lock-alt"></i>
-                                            </div>
-                                        </div>
-                                        @error('apple_password')
-                                        <div class="invalid-feedback">
-                                           {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
+                                    <input type="text" class="form-control" placeholder="**********">
+
                                 </div>
+
                             </div>
                         </div> <!-- / .row -->
 
@@ -212,21 +202,23 @@
 
                                     <div class="btn-group-toggle" data-toggle="buttons">
                                         <label class="btn btn-white">
-                                            <input type="radio" name="send_code" id="option1" value="1" checked=""> <i class="fe fe-monitor"></i> جهاز الماك
+                                            <input type="radio" name="options" id="option1" checked=""> <i class="fe fe-monitor"></i> جهاز الماك
                                         </label>
                                         <label class="btn btn-white">
-                                            <input type="radio" name="send_code" id="option2" value="2"> <i class="fe fe-smartphone"></i> رسالة sms
+                                            <input type="radio" name="options" id="option2"> <i class="fe fe-smartphone"></i> رسالة sms
                                         </label>
                                     </div>
 
                                 </div>
+
                             </div>
+
                         </div> <!-- / .row -->
 
                         <!-- Buttons -->
-                        <button type="submit" class="btn btn-block btn-primary">
+                        <a href="#" class="btn btn-block btn-primary">
                             تفعيل الحساب
-                        </button>
+                        </a>
 
                     </form>
                 </div>
@@ -258,17 +250,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 
-@endsection
-
-
-@section('javascript')
-    <script>
-        $(document).ready(function(){
-            $('.upload-single-file input').change(function (e) {
-                $('.upload-single-file p').text(" ملف واحد محدد ("+ e.target.files[0].name +")");
-            });
-        });
-    </script>
 @endsection

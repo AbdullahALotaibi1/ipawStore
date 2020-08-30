@@ -16,5 +16,6 @@ Route::prefix('dashboard')->name('dashboard.')->group(function(){
 
     Route::get('/', 'HomeController@index')->name('home');
     Route::resource('/groups', 'GroupsController');
+    Route::resource('/users', 'UsersController');
 
 });

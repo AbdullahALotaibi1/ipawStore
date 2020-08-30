@@ -9,7 +9,7 @@
             <div class="col-auto">
 
                 <!-- Button -->
-                <a href="{{ route('dashboard.groups.create') }}" class="btn btn-primary lift">
+                <a href="{{ route('dashboard.groups.create') }}" class="btn btn-primary lift" >
                     اضافة مجموعة
                 </a>
             </div>
@@ -29,10 +29,173 @@
         </div> <!-- / .row -->
     </div>
 
+        <br>
+
+
+        <! ============ Static
+         =====================>
+        <div class="row " style="direction: rtl">
+            <div class="col-12 col-lg-2">
+
+                <!-- Card -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col">
+
+                                <!-- Title -->
+                                <h6 class="text-uppercase text-muted mb-2">
+                                    عدد المجموعات
+                                </h6>
+
+                                <!-- Heading -->
+                                <span class="h2 mb-0">
+                         3
+                        </span>
+
+                            </div>
+                            <div class="col-auto">
+
+                                <!-- Icon -->
+                                <i class="fas fa-window-restore text-muted mb-0 h2"></i>
+
+                            </div>
+                        </div> <!-- / .row -->
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-12 col-lg-2">
+
+                <!-- Card -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col">
+
+                                <!-- Title -->
+                                <h6 class="text-uppercase text-muted mb-2">
+                                    المجموعات المتاحة
+                                </h6>
+
+                                <!-- Heading -->
+                                <span class="h2 mb-0">
+                                    1
+                        </span>
+
+                            </div>
+                            <div class="col-auto">
+
+                                <!-- Icon -->
+                                <i class="fas fa-check-square text-muted mb-0 h2"></i>
+
+                            </div>
+                        </div> <!-- / .row -->
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-12 col-lg-2">
+
+                <!-- Card -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col">
+
+                                <!-- Title -->
+                                <h6 class="text-uppercase text-muted mb-2">
+                                    المجموعات الممتلئة
+                                </h6>
+
+                                <!-- Heading -->
+                                <span class="h2 mb-0">
+                                    1
+                        </span>
+
+                            </div>
+                            <div class="col-auto">
+
+                                <!-- Icon -->
+                                <i class="fas fa-exclamation-square text-muted mb-0 h2"></i>
+
+                            </div>
+                        </div> <!-- / .row -->
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-12 col-lg-2">
+
+                <!-- Card -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col">
+
+                                <!-- Title -->
+                                <h6 class="text-uppercase text-muted mb-2">
+                                    المجموعات المغلقة
+                                </h6>
+
+                                <!-- Heading -->
+                                <span class="h2 mb-0">
+                                    1
+                        </span>
+
+                            </div>
+                            <div class="col-auto">
+
+                                <!-- Icon -->
+                                <i class="fas fa-times-square text-muted mb-0 h2"></i>
+
+                            </div>
+                        </div> <!-- / .row -->
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-12 col-lg-2">
+
+                <!-- Card -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col">
+
+                                <!-- Title -->
+                                <h6 class="text-uppercase text-muted mb-2">
+                                    المجموعات المنتهية
+                                </h6>
+
+                                <!-- Heading -->
+                                <span class="h2 mb-0">
+                                    1
+                        </span>
+
+                            </div>
+                            <div class="col-auto">
+
+                                <!-- Icon -->
+                                <i class="fas fa-calendar-alt text-muted mb-0 h2"></i>
+
+                            </div>
+                        </div> <!-- / .row -->
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
         <! ============ Table
          =======================>
 
-        <br>
         <!-- Card -->
         <div class="card" data-list='{"valueNames": ["orders-order", "orders-product", "orders-date", "orders-total", "orders-status", "orders-method"]}'>
             <div class="card-header">
@@ -86,7 +249,7 @@
                         </th>
                         <th>
                             <a href="#" class="text-muted list-sort" data-sort="orders-date">
-                                اسم الشهادة
+                                Team ID
                             </a>
                         </th>
                         <th>
@@ -274,5 +437,6 @@
         </div>
 
     </div>
+
 
 @endsection
