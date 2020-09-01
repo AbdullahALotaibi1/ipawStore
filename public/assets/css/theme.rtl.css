@@ -254,3 +254,28 @@
 .swal2-styled {
     font-family: "DIN Next LT Arabic Regular";
 }
+
+#myTabMulit{
+    direction: rtl;
+    padding-right: 0;
+    font-family: "DIN Next LT Arabic Regular";
+}
+
+.nav-tabs .nav-item:first-child {
+    margin-right: 0;
+}
+
+.tabBody {
+    direction: rtl;
+    margin-top: 30px;
+}
+
+.dropdown-menu {
+    direction: rtl;
+    text-align: right;
+    font-size: 13.5px;
+}
+
+.select2-results__option {
+    font-family: "DIN Next LT Arabic Regular";
+}

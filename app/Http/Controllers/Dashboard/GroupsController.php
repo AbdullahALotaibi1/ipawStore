@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\constantsHelper;
+use App\Customer;
 use App\Group;
 use App\Helpers\EncryptHelper;
 use App\Http\Controllers\Controller;
 use App\Services\Apple\AppleAuthentication;
+use App\Services\Apple\DevicesHelper;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -24,6 +26,8 @@ class GroupsController extends Controller
      */
     public function index()
     {
+        // return DevicesHelper::getListDevices('vg65066@21cn.com','YVAC3XXWN7');
+
         $groups = Group::paginate(10);
 
         $countFull = 0;
@@ -138,7 +142,10 @@ class GroupsController extends Controller
      */
     public function edit(Group $group)
     {
-        //
+        $getCustomers = $group->customers()->get();
+        $getAppleAccount = $group->appleAccount()->get();
+        $getAllGroup = Group::where('status', '=', ConstantsHelper::ACTIVE_GROUP)->where('id', '!=', $group->id)->get();
+        return view('dashboard.groups.edit', compact('group', 'getCustomers', 'getAppleAccount', 'getAllGroup'));
     }
 
     /**
@@ -150,7 +157,81 @@ class GroupsController extends Controller
      */
     public function update(Request $request, Group $group)
     {
-        //
+        if($request->page_id == 'information')
+        {
+            // MARK: - Validation request data
+            $validationData = Validator::make($request->all(), [
+                'name' => 'required|unique:groups,name,' . $group->id,
+                'file_p12' => 'nullable|max:5098|mimetypes:application/octet-stream',
+            ]);
+
+            // MARK: - validator fails
+            if($validationData->fails())
+            {
+                return redirect()->back()->withErrors($validationData->errors())->withInput();
+            }
+
+            if($request->file('file_p12')){
+                // MARK: - Delete File old p12
+                $appleFile = $group->appleFiles()->first();
+                if($appleFile->file_extension == 'p12'){
+                    Storage::delete('private/store/_groups/'.$group->folder.'/_files/'.$appleFile->file_name.'.p12');
+                    $appleFile->delete();
+
+                    // MARK: - Add New File
+                    $fileName = $request->file('file_p12')->hashName();
+                    $fileExtension = $request->file('file_p12')->getClientOriginalExtension();
+                    $uploadFile = $request->file('file_p12')->storeAs('private/store/_groups/'.$group->folder.'/_files', $fileName.'.'.$fileExtension);
+                    if(isset($uploadFile)){
+                        $appleFiles = $group->appleFiles()->create([
+                            'file_name' => $fileName,
+                            'file_extension' => $fileExtension
+                        ]);
+                    }
+                }
+            }
+
+            $updateGroup = $group->update([
+                'name' => $request->name,
+                'status' => $request->status == 'on' ? ConstantsHelper::ACTIVE_GROUP : ConstantsHelper::DISABLED_GROUP,
+            ]);
+
+            if(isset($updateGroup)){
+                Session::flash('message', 'تم تعديل  ('. $request->name.') بنحاج.');
+                return Redirect::route('dashboard.groups.index');
+            }
+
+        }
+        else if($request->page_id == 'appleAccount'){
+            // MARK: - Validation request data
+            $validationData = Validator::make($request->all(), [
+                'apple_email' => 'required|email',
+                'apple_password' => 'required',
+            ]);
+
+            // MARK: - Check if there error in request data
+            if ($validationData->fails()){
+                return redirect()->back()->withErrors($validationData->errors())->withInput();
+            }
+
+            // MARK:- Delete Last Cookies
+            $deleteCookies = File::deleteDirectory(storage_path('app/private/apple/cookies/'.$request->apple_email));
+
+            // MARK: - Login with apple developer account
+            $response = AppleAuthentication::preformLogin($request->apple_email,$request->apple_password, $request->send_code);
+
+            // MARK: - Fail Login
+            if($response['success'] == false){
+                $appleMessage = $response['errorMessage'];
+                return redirect()->back()->with('appleMessage', $appleMessage)->withInput();
+            }
+
+            $request['group_id'] = $group->id;
+            // MARK: - select the verification method
+            return self::selectVerificationMethod($request, $response);
+
+        }
+        return $request->all();
     }
 
     /**
@@ -359,15 +440,19 @@ class GroupsController extends Controller
         $getGroup = Group::find($group_id);
 
         foreach($devices as $device) {
-            $getGroup->customers()->create([
-                'udid' => $device['udid'],
-                'device_type' => $device['devicePlatform'],
-                'device_model' => $device['model'],
-                'status' => ConstantsHelper::NEED_UPDATE_PROFILE_CUSTOMER
-            ]);
+            $checkUdid = Customer::where('udid', '=', $device['udid'])->where('group_id', '=', $group_id)->count();
+            if($checkUdid == 0)
+            {
+                $getGroup->customers()->create([
+                    'udid' => $device['udid'],
+                    'device_type' => $device['devicePlatform'],
+                    'device_model' => $device['model'],
+                    'device_added' => date("Y-m-d H:i:s",strtotime($device['added_date'])),
+                    'status' => ConstantsHelper::NEED_UPDATE_PROFILE_CUSTOMER
+                ]);
+            }
         }
 
         return "success_add";
-
     }
 }

@@ -265,6 +265,11 @@
                             </a>
                         </th>
                         <th>
+                            <a href="#" class="text-muted list-sort">
+                                اخر تحديث
+                            </a>
+                        </th>
+                        <th>
                             <a href="#" class="text-muted ">
                                 الاجراءات
                             </a>
@@ -295,6 +300,9 @@
                                     {{ $group->getStatus()['status'] }}
                                 </div>
                             </td>
+                            <td class="orders-status">
+                                {{ $group->getLastUpdate() }}
+                            </td>
                             <td class="text-right">
                                 <!-- Dropdown -->
                                 <div class="dropdown">
@@ -305,7 +313,7 @@
                                         <a class="dropdown-item" onclick="deleteGroup({{ $group['id'] }})">
                                             حذف
                                         </a>
-                                        <a href="#!" class="dropdown-item">
+                                        <a href="{{ route('dashboard.groups.edit', $group['id']) }}" class="dropdown-item">
                                             تعديل
                                         </a>
                                     </div>

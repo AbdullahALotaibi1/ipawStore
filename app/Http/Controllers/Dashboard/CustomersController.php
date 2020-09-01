@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Customer;
+use App\Group;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -83,4 +84,43 @@ class CustomersController extends Controller
     {
         //
     }
+
+
+    public function compensationOfSpecificCustomers(Request $request)
+    {
+        $groupData = Group::find($request->group_id);
+
+        foreach ($groupData->customers()->get() as $customer)
+        {
+            if($customer->getStatusCompensation()['status_id'] == 1){
+                $checkUdid = Customer::where('udid', '=', $customer->udid)->where('group_id', '=', $request->new_group_id);
+                if($checkUdid->count() == 0){
+                    $updateCustomer = Customer::where('udid', '=', $customer->udid)->where('group_id', '=', $request->group_id)->update([
+                        'group_id' => $request->new_group_id
+                    ]);
+                }
+            }
+        }
+
+        return "success";
+    }
+
+    public function compensationOfAllCustomers(Request $request)
+    {
+        $groupData = Group::find($request->group_id);
+
+        foreach ($groupData->customers()->get() as $customer)
+        {
+            $checkUdid = Customer::where('udid', '=', $customer->udid)->where('group_id', '=', $request->new_group_id);
+            if($checkUdid->count() == 0){
+                $updateCustomer = Customer::where('udid', '=', $customer->udid)->where('group_id', '=', $request->group_id)->update([
+                    'group_id' => $request->new_group_id
+                ]);
+            }
+        }
+
+        return "success";
+    }
+
 }
+

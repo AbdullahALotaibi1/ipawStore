@@ -21,6 +21,11 @@ class Group extends Model
         return Carbon::parse($this->expiration_date)->diffForHumans(now());
     }
 
+    function getLastUpdate()
+    {
+        return Carbon::parse($this->updated_at)->diffForHumans(now());
+    }
+
     function getStatus()
     {
         $status = $this->status;
@@ -63,7 +68,7 @@ class Group extends Model
 
     function customers()
     {
-        return $this->hasOne(Customer::class);
+        return $this->hasMany(Customer::class);
     }
 
 }

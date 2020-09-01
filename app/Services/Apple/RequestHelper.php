@@ -11,8 +11,10 @@ class RequestHelper {
         // Initialize a cURL session
         $cURL = curl_init($url);
         // Setup the appropriate cookie handling
-        curl_setopt($cURL, CURLOPT_COOKIEFILE, $cookies);
-        curl_setopt($cURL, CURLOPT_COOKIEJAR, $cookies);
+        if($cookies != ''){
+            curl_setopt($cURL, CURLOPT_COOKIEFILE, $cookies);
+            curl_setopt($cURL, CURLOPT_COOKIEJAR, $cookies);
+        }
         // Return the cURL session
         return $cURL;
     }

@@ -62,7 +62,7 @@ class ProfilesHelper {
         $getFolderGroup = $appleAccount->groups()->first()->folder;
 
         // storage/5f4d647cedb4c
-        $dir = storage_path('app/private/store/_groups/'.$getFolderGroup.'/_files/profile.mobileprovision');
+        $dir ='private/store/_groups/'.$getFolderGroup.'/_files/profile.mobileprovision';
 
         // get cookie file
         $cookieDir = CookiesHelper::getCookiesFile($email);

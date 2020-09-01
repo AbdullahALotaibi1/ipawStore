@@ -23,6 +23,7 @@ class CreateCustomersTable extends Migration
             $table->string('device_id')->nullable();
             $table->string('device_type')->nullable();
             $table->string('device_model')->nullable();
+            $table->dateTime('device_added')->nullable();
             $table->string('register_coupon')->nullable();
             $table->integer('status');
             $table->timestamps();

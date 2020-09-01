@@ -18,4 +18,6 @@ class ConstantsHelper extends Model
     // MARK: - STATUS Customer
     const NEED_UPDATE_PROFILE_CUSTOMER = "9";
     const ACTIVE_CUSTOMER = "1";
+    const DISABLED_CUSTOMER = "2";
+
 }

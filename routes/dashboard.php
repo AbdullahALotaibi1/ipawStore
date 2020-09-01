@@ -21,6 +21,12 @@ Route::prefix('dashboard')->name('dashboard.')->group(function(){
     Route::resource('/groups', 'GroupsController');
     Route::post('/groups/ajax/delete', 'GroupsController@deleteAjax')->name('groups.ajax.delete');
 
+    // MARK: - Customers Route
+    Route::resource('/customers', 'CustomersController');
+    Route::post('/customers/ajax/compensationOfSpecificCustomers', 'CustomersController@compensationOfSpecificCustomers')->name('customers.ajax.compensationOfSpecificCustomers');
+    Route::post('/customers/ajax/compensationOfAllCustomers', 'CustomersController@compensationOfAllCustomers')->name('customers.ajax.compensationOfAllCustomers');
+
+
 
 
 });
