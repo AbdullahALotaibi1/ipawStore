@@ -8,7 +8,14 @@ class ConstantsHelper extends Model
 {
     // MARK: - KEY
     const STORE_KEY = "ASD&*(534AS4D@#ABDULLAH_MOTLAQ_ALOTAIBI";
+    const STORE_KEY_IV = "ABDULLAH_MOTLAQ_ALOTAIBI@54$564da58s56";
 
     // MARK: - STATUS GROUPS
     const NEED_UPDATE_LOGIN_APPLE_DEVELOPER = "9";
+    const ACTIVE_GROUP = "1";
+    const DISABLED_GROUP = "2";
+
+    // MARK: - STATUS Customer
+    const NEED_UPDATE_PROFILE_CUSTOMER = "9";
+    const ACTIVE_CUSTOMER = "1";
 }

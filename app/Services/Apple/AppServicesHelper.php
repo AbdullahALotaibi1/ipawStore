@@ -8,7 +8,8 @@ class AppServicesHelper {
      * @access public
      */
     public static $loginBaseUrl = "https://idmsa.apple.com/IDMSWebAuth/";
-    public static $servicesBaseUrl = "https://developer.apple.com/services-account/v1/";
+    public static $servicesBaseUrl = "https://developer.apple.com/services-account/QH65B2/account/";
+    public static $servicesAccountUrl = "https://developer.apple.com/services-account/v1/";
 
     /**
      * @var string

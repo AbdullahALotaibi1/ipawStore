@@ -223,3 +223,34 @@
 .alert-dismissible {
     padding-right: 1.25rem !important;
 }
+
+.pagination-class {
+    direction: rtl !important;
+}
+
+.page-item:first-child .page, .page-item:first-child .page-link {
+    margin-left: 0;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-top-right-radius: .375rem !important;
+    border-bottom-right-radius: .375rem !important;
+}
+
+.page-item:last-child .page, .page-item:last-child .page-link {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-top-left-radius: .375rem !important;
+    border-bottom-left-radius: .375rem!important;
+}
+
+.swal2-title {
+    font-family: "DIN Next LT Arabic Regular";
+}
+
+#swal2-content {
+    font-family: "DIN Next LT Arabic Regular";
+}
+
+.swal2-styled {
+    font-family: "DIN Next LT Arabic Regular";
+}

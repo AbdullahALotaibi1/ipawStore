@@ -2,6 +2,8 @@
 
 namespace App\Services\Apple;
 
+use Illuminate\Support\Facades\Storage;
+
 class RequestHelper {
 
     public static function cURL($url = null, $cookies)
@@ -15,7 +17,7 @@ class RequestHelper {
         return $cURL;
     }
 
-    public static function request($url, $fields = [], $headers = [], $followLocation = true, $cookies, $header = 0)
+    public static function request($url, $cookies ,$fields = [], $headers = [], $followLocation = false,  $header = 0, $downloadDir = '')
     {
         // Open new cURL session
         $cURL = self::cURL($url, $cookies);
@@ -23,25 +25,34 @@ class RequestHelper {
         // Return both response headers and body
         curl_setopt($cURL, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($cURL, CURLOPT_HEADER, $header); // hide 0 / show 1
-        if($followLocation == true){
-            curl_setopt($cURL, CURLOPT_FOLLOWLOCATION, true);
-        }
+        curl_setopt($cURL, CURLOPT_FOLLOWLOCATION, $followLocation);
+
 
         // fields
         if($fields != null) {
             // Setup cURL session POST fields
-            curl_setopt($cURL, CURLOPT_POSTFIELDS, http_build_query($fields));
+            curl_setopt($cURL, CURLOPT_POSTFIELDS, $fields);
         }
 
         // headers
         if($headers != null){
+            curl_setopt($cURL, CURLOPT_ENCODING, "");
             curl_setopt($cURL, CURLOPT_HTTPHEADER, $headers);
+        }
+
+        if ($downloadDir != ''){
+            curl_setopt($cURL, CURLOPT_CUSTOMREQUEST, "GET");
         }
 
         // Execute the cURL session
         $result = curl_exec($cURL);
         curl_close($cURL);
 
+        // download
+        if($downloadDir != ''){
+            Storage::put($downloadDir, $result); // create cookies file
+            return 'success_download';
+        }
         return $result;
     }
 

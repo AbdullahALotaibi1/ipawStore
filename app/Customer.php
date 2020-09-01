@@ -4,11 +4,17 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AppleAccount extends Model
+class Customer extends Model
 {
     protected $fillable = [
-        'apple_email',
-        'apple_password',
+        'full_name',
+        'phone_number',
+        'udid',
+        'device_id',
+        'device_type',
+        'device_model',
+        'register_coupon',
+        'status',
     ];
 
     // MARK: - Relationship functions
@@ -16,5 +22,4 @@ class AppleAccount extends Model
     {
         return $this->belongsTo(Group::class, 'group_id', 'id');
     }
-
 }

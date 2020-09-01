@@ -7,9 +7,11 @@ use App\Group;
 use App\Helpers\EncryptHelper;
 use App\Http\Controllers\Controller;
 use App\Services\Apple\AppleAuthentication;
-use App\Services\Apple\CookiesHelper;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -22,7 +24,26 @@ class GroupsController extends Controller
      */
     public function index()
     {
-        return view('dashboard.groups.index');
+        $groups = Group::paginate(10);
+
+        $countFull = 0;
+        foreach (Group::all() as $group)
+        {
+            $countCu = $group->customers()->count();
+            if($countCu >= 100){
+                $countFull++;
+            }
+        }
+
+        $statistics = array(
+            'count_group' => Group::all()->count(),
+            'active_group' => Group::where('status', '=', ConstantsHelper::ACTIVE_GROUP)->count(),
+            'disabled_group' => Group::where('status', '=', ConstantsHelper::DISABLED_GROUP)->count(),
+            'expired_group' => Group::whereDate('expiration_date', '<', now())->count(),
+            'full_group' => $countFull,
+        );
+
+        return view('dashboard.groups.index', compact('groups', 'statistics'));
     }
 
     /**
@@ -63,6 +84,7 @@ class GroupsController extends Controller
             // MARK: - Login with apple developer account
             $response = AppleAuthentication::preformLogin($request->apple_email,$request->apple_password, $request->send_code);
             // MARK: - Fail Login
+
             if($response['success'] == false){
                 $appleMessage = $response['errorMessage'];
                 return redirect()->back()->with('appleMessage', $appleMessage)->withInput();
@@ -139,8 +161,37 @@ class GroupsController extends Controller
      */
     public function destroy(Group $group)
     {
-        //
+
     }
+
+    public function deleteAjax(Request $request)
+    {
+
+        $group = Group::find($request->group_id);
+
+        if($group->count() != 0){
+            $getAppleEmail = $group->appleAccount()->first()->apple_email;
+
+            // MARK: - Delete All Folders
+            // MARK: - Delete Cookies file
+            $deleteCookies = File::deleteDirectory(storage_path('app/private/apple/cookies/'.EncryptHelper::Decrypt($getAppleEmail)));
+            // MARK: - Delete App + profile + p12 Files
+            $deleteAPP = File::deleteDirectory(storage_path('app/private/store/_groups/'.$group->folder));
+            // MARK: - Delete All database for group
+            $deleteGroup = $group->delete();
+
+            // MARK: - Delete Group
+            return response()->json([
+                'deleteCookies' => $deleteCookies,
+                'deleteAPP' => $deleteAPP,
+//                'deleteGroup' => $deleteGroup,
+            ]);
+        }
+
+
+    }
+
+
 
 
     private function createNewGroup($request)
@@ -228,7 +279,31 @@ class GroupsController extends Controller
                 return view('dashboard.groups.create_code', compact('scnt','group_id', 'errorMessage'));
             }
 
-            return view('dashboard.groups.create_login');
+
+            // get account info
+            $resAccountInfo = AppleAuthentication::getAccountInfo(EncryptHelper::Decrypt($appleEmail));
+            if($resAccountInfo['success'] == true){
+
+                // Convert timestamp to date
+                $datetimeFormat = 'Y-m-d H:i:s';
+                $date = new \DateTime();
+                $date->setTimestamp(substr($resAccountInfo['date_expires'], 0, 10));
+
+                // update status group
+                $updateGroup = $getGroup->update([
+                    'team_id' => $resAccountInfo['team_id'],
+                    'expiration_date' => $date->format($datetimeFormat),
+                    'status' => ConstantsHelper::ACTIVE_GROUP,
+                ]);
+
+                $devices = $resAccountInfo['registered_devices'];
+                $addDevices = self::addDevicesToGroup($request->group_id, $devices);
+                if($addDevices == 'success_add'){
+                    Session::flash('message', 'تم اضافة المجموعة بنحاج.');
+                    return Redirect::route('dashboard.groups.index');
+                }
+            }
+
         }
 
         return Redirect::route('dashboard.groups.index');
@@ -276,5 +351,23 @@ class GroupsController extends Controller
             return view('dashboard.groups.create_code', compact('scnt', 'group_id'));
         }
         return Redirect::route('dashboard.groups.index');
+    }
+
+    private function addDevicesToGroup($group_id, $devices)
+    {
+        // MARK: - Get Group Info
+        $getGroup = Group::find($group_id);
+
+        foreach($devices as $device) {
+            $getGroup->customers()->create([
+                'udid' => $device['udid'],
+                'device_type' => $device['devicePlatform'],
+                'device_model' => $device['model'],
+                'status' => ConstantsHelper::NEED_UPDATE_PROFILE_CUSTOMER
+            ]);
+        }
+
+        return "success_add";
+
     }
 }

@@ -35,6 +35,27 @@
         <! ============ Static
          =====================>
         <div class="row " style="direction: rtl">
+            @if(Session::has('message'))
+            <div class="col-12">
+
+                <!-- Warning -->
+                <div class="card bg-success border">
+                    <div class="card-body">
+
+                        <!-- Heading -->
+                        <h4 class="mb-3 text-white">
+                            <i class="fe fe-alert-triangle"></i> بنجاح
+                        </h4>
+
+                        <!-- Text -->
+                        <p class="small text-white mb-2">
+                            {{ Session::get('message') }}
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+            @endif
             <div class="col-12 col-lg-2">
 
                 <!-- Card -->
@@ -50,8 +71,8 @@
 
                                 <!-- Heading -->
                                 <span class="h2 mb-0">
-                         3
-                        </span>
+                                    {{ $statistics['count_group'] }}
+                                </span>
 
                             </div>
                             <div class="col-auto">
@@ -78,21 +99,18 @@
                                 <h6 class="text-uppercase text-muted mb-2">
                                     المجموعات المتاحة
                                 </h6>
-
                                 <!-- Heading -->
                                 <span class="h2 mb-0">
-                                    1
-                        </span>
+                                    {{ $statistics['active_group'] }}
+                                </span>
 
                             </div>
                             <div class="col-auto">
 
                                 <!-- Icon -->
                                 <i class="fas fa-check-square text-muted mb-0 h2"></i>
-
                             </div>
                         </div> <!-- / .row -->
-
                     </div>
                 </div>
 
@@ -112,7 +130,7 @@
 
                                 <!-- Heading -->
                                 <span class="h2 mb-0">
-                                    1
+                                    {{ $statistics['full_group'] }}
                         </span>
 
                             </div>
@@ -143,7 +161,7 @@
 
                                 <!-- Heading -->
                                 <span class="h2 mb-0">
-                                    1
+                                    {{ $statistics['disabled_group'] }}
                         </span>
 
                             </div>
@@ -174,8 +192,8 @@
 
                                 <!-- Heading -->
                                 <span class="h2 mb-0">
-                                    1
-                        </span>
+                                    {{ $statistics['expired_group'] }}
+                                </span>
 
                             </div>
                             <div class="col-auto">
@@ -197,7 +215,7 @@
          =======================>
 
         <!-- Card -->
-        <div class="card" data-list='{"valueNames": ["orders-order", "orders-product", "orders-date", "orders-total", "orders-status", "orders-method"]}'>
+        <div class="card" data-list='{"valueNames": ["group-id", "group-name", "team-id"]}'>
             <div class="card-header">
                 <!-- Search -->
                 <form>
@@ -211,59 +229,38 @@
                     </div>
                 </form>
 
-                <!-- Dropdown -->
-                <div class="dropdown">
-                    <button class="btn btn-sm btn-white dropdown-toggle" type="button" id="bulkActionDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        الاجراءات
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="bulkActionDropdown">
-                        <a class="dropdown-item" href="#!">Action</a>
-                        <a class="dropdown-item" href="#!">Another action</a>
-                        <a class="dropdown-item" href="#!">Something else here</a>
-                    </div>
-                </div>
-
             </div>
             <div class="table-responsive">
                 <table class="table table-sm table-nowrap card-table table-live-data">
                     <thead>
                     <tr>
                         <th>
-
-                            <!-- Checkbox -->
-                            <div class="custom-control custom-checkbox table-checkbox">
-                                <input type="checkbox" class="list-checkbox-all custom-control-input" name="ordersSelect" id="ordersSelectAll">
-                                <label class="custom-control-label" for="ordersSelectAll">&nbsp;</label>
-                            </div>
-
-                        </th>
-                        <th>
-                            <a href="#" class="text-muted list-sort" data-sort="orders-order">
+                            <a href="#" class="text-muted list-sort" data-sort="group-id">
                                 رقم المجموعة
                             </a>
                         </th>
                         <th>
-                            <a href="#" class="text-muted list-sort" data-sort="orders-product">
+                            <a href="#" class="text-muted list-sort" data-sort="group-name">
                                 اسم المجموعة
                             </a>
                         </th>
                         <th>
-                            <a href="#" class="text-muted list-sort" data-sort="orders-date">
+                            <a href="#" class="text-muted list-sort" data-sort="team-id">
                                 Team ID
                             </a>
                         </th>
                         <th>
-                            <a href="#" class="text-muted list-sort" data-sort="orders-total">
+                            <a href="#" class="text-muted list-sort" >
                                 عدد المشتركين
                             </a>
                         </th>
                         <th>
-                            <a href="#" class="text-muted list-sort" data-sort="orders-status">
-                                صلاحية الشهادة
+                            <a href="#" class="text-muted list-sort" >
+                                مدة صلاحية الشهادة
                             </a>
                         </th>
                         <th>
-                            <a href="#" class="text-muted list-sort" data-sort="orders-method">
+                            <a href="#" class="text-muted list-sort">
                                 حالة المجموعة
                             </a>
                         </th>
@@ -275,168 +272,104 @@
                     </tr>
                     </thead>
                     <tbody class="list">
-                    <tr>
-                        <td>
-                            <!-- Checkbox -->
-                            <div class="custom-control custom-checkbox table-checkbox">
-                                <input type="checkbox" class="list-checkbox custom-control-input" name="ordersSelect" id="ordersSelectOne">
-                                <label class="custom-control-label" for="ordersSelectOne">&nbsp;</label>
-                            </div>
-                        </td>
-                        <td class="orders-order">
-                            #6521
-                        </td>
-                        <td class="orders-product">
-                            مجموعة 36
-                        </td>
-                        <td class="orders-date">
-                            X9DLA0D283
-                        </td>
-                        <td class="orders-total">
-                            98 مشترك
-                        </td>
-                        <td class="orders-status">
-                            متبقي 192 يوم
-                        </td>
-                        <td class="orders-method">
-                            <!-- Badge -->
-                            <div class="badge badge-soft-success">
-                                متاحة
-                            </div>
-                        </td>
-                        <td class="text-right">
-
-                            <!-- Dropdown -->
-                            <div class="dropdown">
-                                <a href="#" class="dropdown-ellipses dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fe fe-more-vertical"></i>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a href="#!" class="dropdown-item">
-                                        Action
-                                    </a>
-                                    <a href="#!" class="dropdown-item">
-                                        Another action
-                                    </a>
-                                    <a href="#!" class="dropdown-item">
-                                        Something else here
-                                    </a>
+                    @foreach($groups as $group)
+                        <tr>
+                            <td class="orders-order">
+                                #{{ $group['id'] }}
+                            </td>
+                            <td class="orders-product">
+                                {{ $group['name'] }}
+                            </td>
+                            <td class="orders-date">
+                                {{ $group['team_id'] }}
+                            </td>
+                            <td class="orders-total">
+                                {{ $group->customers()->count() }}
+                            </td>
+                            <td class="orders-status">
+                                {{ $group->getDateExpires() }}
+                            </td>
+                            <td class="orders-method">
+                                <!-- Badge -->
+                                <div class="badge badge-soft-{{ $group->getStatus()['className'] }}">
+                                    {{ $group->getStatus()['status'] }}
                                 </div>
-                            </div>
-
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <!-- Checkbox -->
-                            <div class="custom-control custom-checkbox table-checkbox">
-                                <input type="checkbox" class="list-checkbox custom-control-input" name="ordersSelect" id="ordersSelectOne">
-                                <label class="custom-control-label" for="ordersSelectOne">&nbsp;</label>
-                            </div>
-                        </td>
-                        <td class="orders-order">
-                            #6522
-                        </td>
-                        <td class="orders-product">
-                            مجموعة 37
-                        </td>
-                        <td class="orders-date">
-                            S02LA5AS84
-                        </td>
-                        <td class="orders-total">
-                            100 مشترك
-                        </td>
-                        <td class="orders-status">
-                            متبقي 291 يوم
-                        </td>
-                        <td class="orders-method">
-                            <!-- Badge -->
-                            <div class="badge badge-soft-warning">
-                                الحد الاعلى
-                            </div>
-                        </td>
-                        <td class="text-right">
-
-                            <!-- Dropdown -->
-                            <div class="dropdown">
-                                <a href="#" class="dropdown-ellipses dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fe fe-more-vertical"></i>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a href="#!" class="dropdown-item">
-                                        Action
+                            </td>
+                            <td class="text-right">
+                                <!-- Dropdown -->
+                                <div class="dropdown">
+                                    <a href="#" class="dropdown-ellipses dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fe fe-more-vertical"></i>
                                     </a>
-                                    <a href="#!" class="dropdown-item">
-                                        Another action
-                                    </a>
-                                    <a href="#!" class="dropdown-item">
-                                        Something else here
-                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" onclick="deleteGroup({{ $group['id'] }})">
+                                            حذف
+                                        </a>
+                                        <a href="#!" class="dropdown-item">
+                                            تعديل
+                                        </a>
+                                    </div>
                                 </div>
-                            </div>
-
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <!-- Checkbox -->
-                            <div class="custom-control custom-checkbox table-checkbox">
-                                <input type="checkbox" class="list-checkbox custom-control-input" name="ordersSelect" id="ordersSelectOne">
-                                <label class="custom-control-label" for="ordersSelectOne">&nbsp;</label>
-                            </div>
-                        </td>
-                        <td class="orders-order">
-                            #6523
-                        </td>
-                        <td class="orders-product">
-                            مجموعة 38
-                        </td>
-                        <td class="orders-date">
-                            P24LG6ATE9
-                        </td>
-                        <td class="orders-total">
-                            100 مشترك
-                        </td>
-                        <td class="orders-status">
-                            متبقي 30 يوم
-                        </td>
-                        <td class="orders-method">
-                            <!-- Badge -->
-                            <div class="badge badge-soft-danger">
-                                مغلقة
-                            </div>
-                        </td>
-                        <td class="text-right">
-
-                            <!-- Dropdown -->
-                            <div class="dropdown">
-                                <a href="#" class="dropdown-ellipses dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fe fe-more-vertical"></i>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a href="#!" class="dropdown-item">
-                                        Action
-                                    </a>
-                                    <a href="#!" class="dropdown-item">
-                                        Another action
-                                    </a>
-                                    <a href="#!" class="dropdown-item">
-                                        Something else here
-                                    </a>
-                                </div>
-                            </div>
-
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
+                    @endforeach
 
                     </tbody>
                 </table>
             </div>
-        </div>
 
+        </div>
+        <div class="pagination-class">
+            {{ $groups->links() }}
+        </div>
     </div>
 
+@endsection
 
+@section('javascript')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+    <script>
+
+        // Setup Ajax
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        // Delete Group Function
+        function deleteGroup(group_id)
+        {
+            Swal.fire({
+                title: 'هل انت متاكد؟',
+                text: "هل انت متاكد من حذف المجموعة، سيتم حذف كل المشتركين والتطبيقات والشهادات",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'نعم قم بالحذف!',
+                cancelButtonText: 'اغلاق'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        type:'post',
+                        url: "{{ route('dashboard.groups.ajax.delete') }}",
+                        data: {group_id:  group_id},
+                        success: function( msg ) {
+                            Swal.fire(
+                                'بنجاح!',
+                                'تم حذف المجموعة بنجاح.',
+                                'success'
+                            )
+                            setTimeout(function(){
+                                window.location = "{{ route('dashboard.groups.index') }}";
+                            }, 1500);
+                        }
+                    });
+                }
+            })
+        }
+
+    </script>
 @endsection
