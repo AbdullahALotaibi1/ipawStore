@@ -245,6 +245,8 @@
 
 .swal2-title {
     font-family: "DIN Next LT Arabic Regular";
+    direction: rtl;
+    text-align: right !important;
 }
 
 #swal2-content {
@@ -263,6 +265,7 @@
 
 .nav-tabs .nav-item:first-child {
     margin-right: 0;
+    margin-left: .75rem;
 }
 
 .tabBody {
@@ -279,3 +282,34 @@
 .select2-results__option {
     font-family: "DIN Next LT Arabic Regular";
 }
+
+.nav-tabs .nav-item:last-child {
+    margin-right: .75rem;
+}
+
+
+.dropzone {
+    border: 1px dashed #d2ddec !important;
+    border-radius: .375rem;
+}
+
+.dropzone:hover .dz-message{
+    border-color: #95aac9;
+    color: #12263f;
+}
+
+.dropzone:hover{
+    border-color: #95aac9 !important;
+}
+
+.dz-message {
+    border: 0;
+
+}
+
+.dropzone {
+    position: relative;
+    display: block;
+    flex-direction: column;
+}
+

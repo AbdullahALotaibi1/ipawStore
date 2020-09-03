@@ -330,6 +330,7 @@
         <div class="pagination-class">
             {{ $groups->links() }}
         </div>
+
     </div>
 
 @endsection

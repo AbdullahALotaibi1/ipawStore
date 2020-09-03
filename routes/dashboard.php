@@ -27,6 +27,12 @@ Route::prefix('dashboard')->name('dashboard.')->group(function(){
     Route::post('/customers/ajax/compensationOfAllCustomers', 'CustomersController@compensationOfAllCustomers')->name('customers.ajax.compensationOfAllCustomers');
 
 
+    // MARK: - Applications Route
+    Route::resource('/applications', 'ApplicationsInfoController');
+    Route::post('/applications/ajax/uploadApp', 'ApplicationsInfoController@uploadApp')->name('applications.ajax.uploadApp');
+
+
+
 
 
 });

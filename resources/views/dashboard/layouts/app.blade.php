@@ -42,7 +42,7 @@
 <script src="{{ asset('assets/libs/@shopify/draggable/lib/es5/draggable.bundle.legacy.js')}}"></script>
 <script src="{{ asset('assets/libs/autosize/dist/autosize.min.js')}}"></script>
 <script src="{{ asset('assets/libs/chart.js/dist/Chart.min.js')}}"></script>
-<script src="{{ asset('assets/libs/dropzone/dist/min/dropzone.min.js')}}"></script>
+{{--<script src="{{ asset('assets/libs/dropzone/dist/min/dropzone.min.js')}}"></script>--}}
 <script src="{{ asset('assets/libs/flatpickr/dist/flatpickr.min.js')}}"></script>
 <script src="{{ asset('assets/libs/highlightjs/highlight.pack.min.js')}}"></script>
 <script src="{{ asset('assets/libs/jquery-mask-plugin/dist/jquery.mask.min.js')}}"></script>
@@ -52,8 +52,8 @@
 <script src="{{ asset('assets/libs/chart.js/Chart.extension.js')}}"></script>
 
 <!-- Theme JS -->
-<script src="{{ asset('assets/js/theme.min.js')}}"></script>
-<script src="{{ asset('assets/js/dashkit.min.js')}}"></script>
+{{--<script src="{{ asset('assets/js/theme.min.js')}}"></script>--}}
+{{--<script src="{{ asset('assets/js/dashkit.min.js')}}"></script>--}}
 
 @yield('javascript')
 

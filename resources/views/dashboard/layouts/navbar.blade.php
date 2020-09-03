@@ -94,7 +94,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link {{ request()->routeIs('dashboard.applications.*') ? 'active' : '' }}" href="{{ route('dashboard.applications.index') }}">
                         <i class="fas fa-arrow-alt-square-up"></i> <span class="title-link"> الصندوق الذكي </span>
                     </a>
                 </li>
