@@ -22,5 +22,6 @@ class ConstantsHelper extends Model
     const NEED_UPDATE_PROFILE_CUSTOMER = "9";
     const ACTIVE_CUSTOMER = "1";
     const DISABLED_CUSTOMER = "2";
+    const NEW_ORDERS_CUSTOMER = "8";
 
 }

@@ -6,9 +6,13 @@ use ZipArchive;
 class IpaHelper {
     public static function ExtractPlist($pathFolder, $file_ipa)
     {
+
         $returnValue = ['success' => false];
         $zip = new ZipArchive;
         $pathIPA = $pathFolder.'/'.$file_ipa;
+        // Copy icon
+        $iconPath = storage_path('app/public/store/_icon/'.$file_ipa.'.png');
+
         if (!$zip->open($pathIPA)){
             return $returnValue;
         }else{
@@ -16,14 +20,17 @@ class IpaHelper {
                 $path = $zip->getNameIndex($i);
                 if (stripos(pathinfo($path, PATHINFO_BASENAME), ".app") !== false)
                 {
-                    $pathPlist = $path.'Info.plist'; // file name
-                    $pathIcon = $path.'AppIcon60x60@2x.png'; // file name
-                    $savePathPlist = "$pathFolder/Info.plist";
-                    copy("zip://{$pathIPA}#{$pathPlist}", $savePathPlist);
-                    copy("zip://{$pathIPA}#{$pathIcon}", "$pathFolder/icon.png");
-                    $returnValue['success'] = true;
-                    $returnValue['pathPlist'] = $savePathPlist;
-                    break;
+                        $pathPlist = $path.'Info.plist'; // file name
+                        $savePathPlist = "$pathFolder/Info.plist";
+                        @copy("zip://{$pathIPA}#{$pathPlist}", $savePathPlist);
+                        $returnValue['success'] = true;
+                        $returnValue['pathPlist'] = $savePathPlist;
+                }elseif(stripos(pathinfo($path, PATHINFO_BASENAME), "60x60@2x.png") !== false){
+                        @copy("zip://{$pathIPA}#{$path}", $iconPath);
+                        break;
+                }elseif(stripos(pathinfo($path, PATHINFO_BASENAME), "AppIcon60x60@2x.png") !== false){
+                        @copy("zip://{$pathIPA}#{$path}", $iconPath);
+                        break;
                 }
             }
         }

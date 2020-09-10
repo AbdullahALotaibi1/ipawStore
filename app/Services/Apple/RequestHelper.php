@@ -19,7 +19,7 @@ class RequestHelper {
         return $cURL;
     }
 
-    public static function request($url, $cookies ,$fields = [], $headers = [], $followLocation = false,  $header = 0, $downloadDir = '')
+    public static function request($url, $cookies ,$fields = [], $headers = [], $followLocation = false,  $header = 0, $downloadDir = '', $teest = 1)
     {
         // Open new cURL session
         $cURL = self::cURL($url, $cookies);
@@ -33,12 +33,15 @@ class RequestHelper {
         // fields
         if($fields != null) {
             // Setup cURL session POST fields
+            curl_setopt($cURL,CURLOPT_POST, 1);
             curl_setopt($cURL, CURLOPT_POSTFIELDS, $fields);
         }
 
         // headers
         if($headers != null){
-            curl_setopt($cURL, CURLOPT_ENCODING, "");
+            if($teest == 1){
+                curl_setopt($cURL, CURLOPT_ENCODING, "");
+            }
             curl_setopt($cURL, CURLOPT_HTTPHEADER, $headers);
         }
 

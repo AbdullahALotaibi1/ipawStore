@@ -12,4 +12,11 @@ class Application extends Model
         'group_id',
         'app_plist',
     ];
+
+
+    // MARK: - Relationship functions
+    function groups()
+    {
+        return $this->belongsTo(Group::class, 'group_id', 'id');
+    }
 }

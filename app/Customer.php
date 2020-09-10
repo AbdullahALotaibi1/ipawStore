@@ -25,6 +25,11 @@ class Customer extends Model
         return Carbon::parse($this->device_added)->diffForHumans(now());
     }
 
+    function getLastUpdate()
+    {
+        return Carbon::parse($this->updated_at)->diffForHumans(now());
+    }
+
     function getStatusCompensation()
     {
         $returnValue = array('className' => '', 'status' => '', 'status_id' => '');
@@ -56,6 +61,9 @@ class Customer extends Model
         }else if($status == ConstantsHelper::ACTIVE_CUSTOMER){
             $returnValue['status'] = 'مفعل';
             $returnValue['className'] = 'success';
+        }else if($status == ConstantsHelper::NEW_ORDERS_CUSTOMER){
+            $returnValue['status'] = 'طلب جديد';
+            $returnValue['className'] = 'info';
         }
 
         return $returnValue;

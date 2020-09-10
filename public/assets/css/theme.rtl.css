@@ -251,6 +251,7 @@
 
 #swal2-content {
     font-family: "DIN Next LT Arabic Regular";
+    direction: rtl;
 }
 
 .swal2-styled {
@@ -313,3 +314,31 @@
     flex-direction: column;
 }
 
+
+.card-loading {
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.card-loading-title {
+    margin-top: 15px;
+}
+
+.app_icon {
+    width: 55px;
+    height: 55px;
+    border-radius: 11px;
+}
+
+
+a.wp-link {
+    color: #2eb93a;
+    transition: 0.2s;
+
+}
+
+a.wp-link:hover {
+    transition: 0.2s;
+    color: #258e2e;
+}

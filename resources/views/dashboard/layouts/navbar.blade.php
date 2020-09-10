@@ -109,7 +109,7 @@
             <!-- Certification -->
             <ul class="navbar-nav mb-md-4">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link {{ request()->routeIs('dashboard.orders.*') ? 'active' : '' }}" href="{{ route('dashboard.orders.index') }}">
                         <i class="fas fa-user-plus"></i> <span class="title-link"> الطلبات </span>
                     </a>
                 </li>

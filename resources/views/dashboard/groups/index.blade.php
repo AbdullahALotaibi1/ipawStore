@@ -334,7 +334,6 @@
     </div>
 
 @endsection
-
 @section('javascript')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 
@@ -356,7 +355,7 @@
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
+                cancelButtonColor: '#dd3333',
                 confirmButtonText: 'نعم قم بالحذف!',
                 cancelButtonText: 'اغلاق'
             }).then((result) => {
@@ -382,3 +381,7 @@
 
     </script>
 @endsection
+
+
+
+

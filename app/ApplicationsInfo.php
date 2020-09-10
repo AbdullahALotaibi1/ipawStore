@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class ApplicationsInfo extends Model
@@ -17,6 +18,12 @@ class ApplicationsInfo extends Model
         'app_folder'
     ];
 
+
+    // MARK: - Group Functions
+    function getLastUpdate()
+    {
+        return Carbon::parse($this->updated_at)->diffForHumans(now());
+    }
 
     // MARK: - Relationship functions
     function applications()

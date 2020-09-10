@@ -5,12 +5,19 @@ namespace App\Http\Controllers\Dashboard;
 use App\ApplicationsInfo;
 use App\ConstantsHelper;
 use App\Group;
+use App\Helpers\EncryptHelper;
 use App\Http\Controllers\Controller;
 use App\Services\Ipa\IpaHelper;
+use App\Services\iPhoneCake\iPhoneCake;
+use App\Services\iPhoneCake\RequestHelper;
 use Illuminate\Http\Request;
 use CFPropertyList\CFPropertyList;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Symfony\Component\Process\Process;
 
@@ -19,12 +26,54 @@ class ApplicationsInfoController extends Controller
 
     public function index()
     {
-
-
-        return view('dashboard.applications.index');
+        $applications = ApplicationsInfo::orderBy('app_arrangement', 'ASC')->get();
+        return view('dashboard.applications.index', compact('applications'));
     }
 
+    public function edit($id)
+    {
+        $app = ApplicationsInfo::find($id);
+        if($app->count() != 0){
+            return view('dashboard.applications.edit', compact('app'));
+        }
+    }
 
+    public function update(Request $request, $id)
+    {
+
+        $app = ApplicationsInfo::find($id);
+        if($app->count() != 0){
+
+            // MARK: - Validation request data
+            $validationData = Validator::make($request->all(), [
+                'app_name' => 'required',
+                'app_version' => 'required',
+                'app_bundle' => 'required',
+            ]);
+
+            // MARK: - validator fails
+            if($validationData->fails())
+            {
+                return redirect()->back()->withErrors($validationData->errors())->withInput();
+            }
+
+
+            // Update
+            $update = $app->update([
+                'app_name' => $request->app_name,
+                'app_version' => $request->app_version,
+                'app_bundle' => $request->app_bundle,
+            ]);
+
+            if(isset($update)){
+                Session::flash('message', 'تم تعديل  ('. $request->app_name.') بنحاج.');
+                return Redirect::route('dashboard.applications.index');
+            }
+        }
+
+        return Redirect::route('dashboard.applications.index');
+
+    }
 
     public function uploadApp(Request $request)
     {
@@ -95,15 +144,14 @@ class ApplicationsInfoController extends Controller
             return $returnValue;
         }
 
-
         // create new app
         $createApp = ApplicationsInfo::create([
             'app_name' => $plist['CFBundleName'],
             'app_version' => $plist['CFBundleShortVersionString'],
             'app_bundle' => $plist['CFBundleIdentifier'],
-            'app_icon' => 'icon.png',
+            'app_icon' => $ipaName.'.ipa.png',
             'app_arrangement' => '0',
-            'app_size' => '0',
+            'app_size' => self::formatSizeUnits(File::size($path.'/'.$ipaName.'.ipa')),
             'app_ipa' => $ipaName.'.ipa',
             'app_folder' => $ipaName,
         ]);
@@ -115,7 +163,6 @@ class ApplicationsInfoController extends Controller
         }
         return $returnValue;
     }
-
 
     private function resignApp($appID)
     {
@@ -133,7 +180,8 @@ class ApplicationsInfoController extends Controller
         $getGroups = Group::where('status', '=', ConstantsHelper::ACTIVE_GROUP)->get();
         $numResignGroup = 0;
         foreach($getGroups as $group){
-            $ipaRandomName = Str::random(40).'.ipa';
+            $randomName = Str::random(40);
+            $ipaRandomName = $randomName.'.ipa';
             $groupFolder = 'public/store/_groups/'.$group['folder'];
             $getPrivateGroupFolder = storage_path('app/private/store/_groups/'.$group['folder']);
             $getFileP12 = $getPrivateGroupFolder.'/_files/'.$group->appleFiles()->where('file_extension', '=', 'p12')->get()[0]['file_name'].'.p12';
@@ -150,6 +198,7 @@ class ApplicationsInfoController extends Controller
             $process = new Process($cmdLine);
             $process->run();
             $outPut = $process->getOutput();
+
             if(isset($outPut)){
                 $getApp->applications()->create([
                     'group_id' => $group->id,
@@ -160,9 +209,115 @@ class ApplicationsInfoController extends Controller
                 $returnValue['message'] = 'تم توقيع تطبيق ('.$getApp->app_name.') على كل مجموعات المتاحة';
                 return $returnValue;
             }
-
             return $returnValue;
         }
+    }
 
+    public function getListApp(Request $request)
+    {
+        $page = $request->page_id;
+        $device = 1;
+          return iPhoneCake::getListApp($page, $device);
+    }
+
+    public function appSearch(Request $request)
+    {
+        $page = $request->page_id;
+        $device = 1;
+        $query = $request->qsearch;
+        return iPhoneCake::appSearch($page, $device, $query);
+    }
+
+    public function getIpaApp($appID)
+    {
+         return iPhoneCake::getIpaApp($appID);
+    }
+
+    public function resignAppAjax(Request $request)
+    {
+        if (isset($request)){
+            $ipaLink = self::getIpaApp($request->app_id);
+            // Download File
+            $ipaRandomName = Str::random(40);
+            $dir ='private/store/_applications_default/'.$ipaRandomName.'/'.$ipaRandomName.'.ipa';
+            $down = RequestHelper::request($ipaLink['data']->link, $dir);
+
+            if(isset($down))
+            {
+                $path = storage_path('app/private/store/_applications_default');
+                return self::extractPlist($path, $ipaRandomName);
+            }
+
+            return $ipaLink;
+        }
+        return "fail";
+    }
+
+    public function updateSorTable(Request $request)
+    {
+        // MARK: - Variables
+        $order = $request->order;
+        foreach ($order as $row){
+            $app_id = $row['id'];
+            $app_arrangement = $row['position'];
+            $update = ApplicationsInfo::where('id', '=', $app_id)->update([
+                'app_arrangement' => $app_arrangement
+            ]);
+        }
+        return "success";
+    }
+
+    public function deleteAjax(Request $request)
+    {
+        $app = ApplicationsInfo::find($request->app_id);
+        if($app->count() != 0) {
+            $getAppFormGorups = $app->applications()->get();
+
+            // Delete App From groups
+            foreach ($getAppFormGorups as $groupsApp){
+                $folder = $groupsApp->groups->folder;
+                $deleteIPA = File::delete(storage_path('app/public/store/_groups/'.$folder.'/'.$groupsApp->app_ipa));
+            }
+            // Delete App Form Info + icon
+            $deleteAPP = File::deleteDirectory(storage_path('app/private/store/_applications_default/'.$app->app_folder.''));
+            $deleteIcon = File::delete(storage_path('app/public/store/_icon/'.$app->app_ipa.'.png'));
+            // Delete Form Database
+            $app->delete();
+        }
+
+        return response()->json([
+            'status' => 'true',
+            'app' => $app,
+        ]);
+    }
+
+    public function formatSizeUnits($bytes)
+    {
+        if ($bytes >= 1073741824)
+        {
+            $bytes = number_format($bytes / 1073741824, 2) . ' GB';
+        }
+        elseif ($bytes >= 1048576)
+        {
+            $bytes = number_format($bytes / 1048576, 2) . ' MB';
+        }
+        elseif ($bytes >= 1024)
+        {
+            $bytes = number_format($bytes / 1024, 2) . ' KB';
+        }
+        elseif ($bytes > 1)
+        {
+            $bytes = $bytes . ' bytes';
+        }
+        elseif ($bytes == 1)
+        {
+            $bytes = $bytes . ' byte';
+        }
+        else
+        {
+            $bytes = '0 bytes';
+        }
+
+        return $bytes;
     }
 }
