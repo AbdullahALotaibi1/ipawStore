@@ -78,4 +78,23 @@ class OrdersController extends Controller
         }
         return $getCustomer;
     }
+
+
+    public function deleteAjax(Request $request)
+    {
+        $order = Customer::where('id', '=', $request->order_id)->where('status', '=', ConstantsHelper::NEW_ORDERS_CUSTOMER);
+
+        if($order->count() != 0){
+            $order->delete();
+            return Response()->json([
+                'success' => true,
+                'message' => 'تم حذف الطلب بنجاح'
+            ]);
+        }
+
+        return Response()->json([
+            'success' => false,
+            'message' => 'حدث خطاء غير متوقع'
+        ]);
+    }
 }

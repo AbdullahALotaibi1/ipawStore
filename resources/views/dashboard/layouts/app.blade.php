@@ -52,8 +52,8 @@
 <script src="{{ asset('assets/libs/chart.js/Chart.extension.js')}}"></script>
 
 <!-- Theme JS -->
-{{--<script src="{{ asset('assets/js/theme.min.js')}}"></script>--}}
-{{--<script src="{{ asset('assets/js/dashkit.min.js')}}"></script>--}}
+<script src="{{ asset('assets/js/theme.min.js')}}"></script>
+<script src="{{ asset('assets/js/dashkit.min.js')}}"></script>
 
 @yield('javascript')
 

@@ -342,3 +342,14 @@ a.wp-link:hover {
     transition: 0.2s;
     color: #258e2e;
 }
+
+.custom-select {
+    background-position: left 0.75rem center;
+    direction: rtl;
+    padding: .5rem 1rem .5rem 2rem;
+}
+
+.bankImage {
+    width: 40px;
+    border-radius: 5px;
+}

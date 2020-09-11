@@ -25,6 +25,7 @@ Route::prefix('dashboard')->name('dashboard.')->group(function(){
     Route::resource('/customers', 'CustomersController');
     Route::post('/customers/ajax/compensationOfSpecificCustomers', 'CustomersController@compensationOfSpecificCustomers')->name('customers.ajax.compensationOfSpecificCustomers');
     Route::post('/customers/ajax/compensationOfAllCustomers', 'CustomersController@compensationOfAllCustomers')->name('customers.ajax.compensationOfAllCustomers');
+    Route::post('/customers/ajax/delete', 'CustomersController@deleteAjax')->name('customers.ajax.delete');
 
 
     // MARK: - Applications Route
@@ -40,7 +41,15 @@ Route::prefix('dashboard')->name('dashboard.')->group(function(){
     // MARK: - Applications Route
     Route::get('/orders', 'OrdersController@index')->name('orders.index');
     Route::post('/orders/ajax/active', 'OrdersController@active')->name('orders.ajax.active');
+    Route::post('/orders/ajax/delete', 'OrdersController@deleteAjax')->name('orders.ajax.delete');
 
+    // MARK: - NotificationSetting Route
+    Route::get('/notification/setting', 'NotificationSettingController@index')->name('notification.index');
+    Route::post('/notification/setting', 'NotificationSettingController@update')->name('notification.update');
+
+    // MARK: - BankAccounts Route
+    Route::resource('/bank/accounts', 'BankAccountsController');
+    Route::post('/bank/accounts/ajax/delete', 'BankAccountsController@deleteAjax')->name('accounts.ajax.delete');
 
 
 });

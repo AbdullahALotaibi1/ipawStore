@@ -151,7 +151,7 @@
                                         <i class="fe fe-more-vertical"></i>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" onclick="deleteGroup({{ $order['id'] }})">
+                                        <a class="dropdown-item" onclick="deleteOrder({{ $order['id'] }})">
                                             حذف
                                         </a>
                                         <a class="active_new_customer dropdown-item" data-id="{{ $order['id'] }}" data-name="{{ $order['full_name'] }}">
@@ -263,17 +263,16 @@
                 }
             });
 
-
         });
 
 
 
         // Delete Function
-        function deleteGroup(order_id)
+        function deleteOrder(order_id)
         {
             Swal.fire({
                 title: 'هل انت متاكد؟',
-                text: "هل انت متاكد من حذف المجموعة، سيتم حذف كل المشتركين والتطبيقات والشهادات",
+                text: "هل انت متاكد من حذف الطلب، لن تتمكن من ارجاع الطلب مرة اخرى",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -284,23 +283,22 @@
                 if (result.value) {
                     $.ajax({
                         type:'post',
-                        url: "{{ route('dashboard.groups.ajax.delete') }}",
-                        data: {group_id:  group_id},
-                        success: function( msg ) {
+                        url: "{{ route('dashboard.orders.ajax.delete') }}",
+                        data: {order_id:  order_id},
+                        success: function( response ) {
                             Swal.fire(
                                 'بنجاح!',
-                                'تم حذف المجموعة بنجاح.',
+                                response['message'],
                                 'success'
                             )
                             setTimeout(function(){
-                                window.location = "{{ route('dashboard.groups.index') }}";
+                                window.location = "{{ route('dashboard.orders.index') }}";
                             }, 1500);
                         }
                     });
                 }
             })
         }
-
     </script>
 @endsection
 

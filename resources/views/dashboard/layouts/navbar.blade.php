@@ -88,7 +88,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('dashboard.users.*') ? 'active' : '' }}" href="{{ route('dashboard.users.index') }}">
+                    <a class="nav-link {{ request()->routeIs('dashboard.customers.*') ? 'active' : '' }}" href="{{ route('dashboard.customers.index') }}">
                         <i class="fas fa-user-friends"></i> <span class="title-link"> المشتركين </span>
                     </a>
                 </li>
@@ -131,20 +131,14 @@
             <!-- Certification -->
             <ul class="navbar-nav mb-md-4">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link  {{ request()->routeIs('dashboard.notification.*') ? 'active' : '' }}" href="{{ route('dashboard.notification.index') }}">
                         <i class="fas fa-bell"></i> <span class="title-link"> الاشعارات </span>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link {{ request()->routeIs('dashboard.accounts.*') ? 'active' : '' }}" href="{{ route('dashboard.accounts.index') }}">
                         <i class="fas fa-credit-card"></i> <span class="title-link"> طرق الدفع </span>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="fas fa-toolbox"></i> <span class="title-link"> الاضافات </span>
                     </a>
                 </li>
 
@@ -164,13 +158,6 @@
 
             <!-- User (md) -->
             <div class="navbar-user d-none d-md-flex" id="sidebarUser">
-
-                <!-- Icon -->
-                <a href="#sidebarModalActivity" class="navbar-user-link" data-toggle="modal">
-              <span class="icon">
-                <i class="fe fe-bell"></i>
-              </span>
-                </a>
 
                 <!-- Dropup -->
                 <div class="dropup">
@@ -192,12 +179,6 @@
 
                 </div>
 
-                <!-- Icon -->
-                <a href="#sidebarModalSearch" class="navbar-user-link" data-toggle="modal">
-              <span class="icon">
-                <i class="fe fe-search"></i>
-              </span>
-                </a>
 
             </div>
 

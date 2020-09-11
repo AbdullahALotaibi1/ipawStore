@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\ConstantsHelper;
 use App\Customer;
 use App\Group;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CustomersController extends Controller
 {
@@ -16,40 +18,10 @@ class CustomersController extends Controller
      */
     public function index()
     {
-        //
+        $customers = Customer::where('status', '!=', ConstantsHelper::NEW_ORDERS_CUSTOMER)->paginate(30);
+        return view('dashboard.customers.index', compact('customers'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Customer $customer)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -59,7 +31,7 @@ class CustomersController extends Controller
      */
     public function edit(Customer $customer)
     {
-        //
+        return view('dashboard.customers.edit', compact('customer'));
     }
 
     /**
@@ -71,20 +43,50 @@ class CustomersController extends Controller
      */
     public function update(Request $request, Customer $customer)
     {
-        //
+        // MARK: - Validation request data
+        $validationData = Validator::make($request->all(), [
+            'full_name' => 'required',
+            'phone_number' => 'required|integer',
+            'status' => 'required',
+        ]);
+
+        // MARK: - validator fails
+        if($validationData->fails())
+        {
+            return redirect()->back()->withErrors($validationData->errors())->withInput();
+        }
+
+        if($customer->status == ConstantsHelper::NEED_UPDATE_PROFILE_CUSTOMER){
+            $request->status = 1;
+        }
+
+        // MARK:- Update Customer
+        $update = $customer->update([
+            'full_name' => $request->full_name,
+            'phone_number' => $request->phone_number,
+            'status' => $request->status,
+        ],[
+            'phone_number.integer' => 'الرجاء ادخال رقم الجوال بطريقة 966555555555'
+        ]);
+
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Customer $customer)
+    public function deleteAjax(Request $request)
     {
-        //
-    }
+        $customer = Customer::where('id', '=', $request->customer_id)->where('status', '!=', ConstantsHelper::NEW_ORDERS_CUSTOMER);
+        if($customer->count() != 0){
+            $customer->delete();
+            return Response()->json([
+                'success' => true,
+                'message' => 'تم حذف المشترك بنجاح'
+            ]);
+        }
 
+        return Response()->json([
+            'success' => false,
+            'message' => 'حدث خطاء غير متوقع'
+        ]);
+    }
 
     public function compensationOfSpecificCustomers(Request $request)
     {
