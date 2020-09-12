@@ -19,6 +19,8 @@ class CreateAppleAccountsTable extends Migration
             $table->foreign('group_id')->references('id')->on('groups')->onDelete('cascade');
             $table->string('apple_email');
             $table->string('apple_password');
+            $table->string('login_remember_key')->nullable();
+            $table->string('login_remember_value')->nullable();
             $table->timestamps();
         });
     }

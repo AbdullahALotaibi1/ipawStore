@@ -3,6 +3,10 @@
 namespace App\Services\Apple;
 
 
+use App\AppleAccount;
+use App\Helpers\EncryptHelper;
+use Illuminate\Support\Facades\File;
+
 class AppleAuthentication {
 
     /**
@@ -14,6 +18,9 @@ class AppleAuthentication {
      * */
     public static function preformLogin($email, $password, $codeReception = 1)
     {
+
+        $getAppleData = AppleAccount::where('apple_email', '=', EncryptHelper::Encrypt($email));
+
         // Setup return value
         $returnValue = array(
             'success' => false,
@@ -22,6 +29,16 @@ class AppleAuthentication {
             'codeReception' => $codeReception
         );
 
+        $headers = [];
+        $cookie = '';
+        // MARK: - Delete Cookies file
+        if($getAppleData->count() != 0) {
+            $deleteCookies = File::deleteDirectory(storage_path('app/private/apple/cookies/'.EncryptHelper::Decrypt($getAppleData->first()->apple_email)));
+            $login_remember_key = EncryptHelper::Decrypt($getAppleData->first()->login_remember_key);
+            $login_remember_value = EncryptHelper::Decrypt($getAppleData->first()->login_remember_value);
+            $cookie = ''.$login_remember_key.'='.$login_remember_value.'';
+            $headers[] = 'Cookie: '.$cookie.'';
+        }
         // get cookie file
         $cookieDir = CookiesHelper::getCookiesFile($email);
 
@@ -35,11 +52,18 @@ class AppleAuthentication {
             'appleId' => $email,
             'accountPassword' => $password
         ]);
+
         // new request
         $request = RequestHelper::request(
             AppServicesHelper::$loginBaseUrl.'authenticate',
             $cookieDir,
-            $fields
+            $fields,
+            $headers,
+            true,
+            1,
+            '',
+            1,
+            $cookie
         );
 
 
@@ -48,19 +72,111 @@ class AppleAuthentication {
         if ($checkForErrors['error'] == true) {
             $returnValue['errorMessage'] = $checkForErrors['errorMessage'];
         } else {
-            // Success Login + get scnt code
-            $returnValue['success'] = true;
-            $returnValue['scnt'] = RequestHelper::getScntCode($request);
+            $cookies = array();
+            preg_match_all('/^Set-Cookie:\\s*([^;]*)/mi', $request, $matches);
+            foreach ($matches[1] as $match) {
+                parse_str($match, $cookie);
+                $cookies = array_merge($cookies, $cookie);
+            }
+            // Check for errors
+            if (isset($cookies['myacinfo'])) {
+                // Success Login
+                $returnValue['success'] = true;
+                $returnValue['myacinfo'] = $cookies['myacinfo'];
+            } else {
+                // Success Login + get scnt code
+                $returnValue['success'] = true;
+                $returnValue['scnt'] = RequestHelper::getScntCode($request);
+            }
         }
 
         // send sms code to your phone
-        if($returnValue['codeReception'] == 2){
+        if($returnValue['codeReception'] == 2 && !isset($cookies['myacinfo'])){
             return self::performGetPhoneNumbers($returnValue['scnt'], $email);
         }else{
             return $returnValue;
         }
     }
 
+
+    public static function preformReLogin($email, $password)
+    {
+
+        $getAppleData = AppleAccount::where('apple_email', '=', EncryptHelper::Encrypt($email));
+
+        // Setup return value
+        $returnValue = array(
+            'success' => false,
+            'errorMessage' => '',
+        );
+
+        $headers = [];
+        $group_id = 0;
+        // MARK: - Delete Cookies file
+        if($getAppleData->count() != 0) {
+            $deleteCookies = File::deleteDirectory(storage_path('app/private/apple/cookies/'.EncryptHelper::Decrypt($getAppleData->first()->apple_email)));
+            $login_remember_key = EncryptHelper::Decrypt($getAppleData->first()->login_remember_key);
+            $login_remember_value = EncryptHelper::Decrypt($getAppleData->first()->login_remember_value);
+            $cookie = ''.$login_remember_key.'='.$login_remember_value.'';
+            $headers[] = 'Cookie: '.$cookie.'';
+            $group_id = $getAppleData->first()->groups->id;
+        }else{
+            $cookie = '';
+        }
+
+        return $cookie;
+        // get cookie file
+        $cookieDir = CookiesHelper::getCookiesFile($email);
+
+
+        // http_build_query
+        $fields = http_build_query([
+            'appIdKey' => AppServicesHelper::$appIdKey,
+            'accNameLocked' => 'false',
+            'language' => AppServicesHelper::$userLocale,
+            'Env' => 'PROD',
+            'appleId' => $email,
+            'accountPassword' => $password
+        ]);
+
+        // new request
+        $request = RequestHelper::request(
+            AppServicesHelper::$loginBaseUrl.'authenticate',
+            $cookieDir,
+            $fields,
+            $headers,
+            true,
+            1,
+            '',
+            1,
+            $cookie
+        );
+
+        // Check for errors
+        $checkForErrors = RequestHelper::checkForErrors($request);
+        if ($checkForErrors['error'] == true) {
+            $returnValue['errorMessage'] = $checkForErrors['errorMessage'];
+        } else {
+            $cookies = array();
+            preg_match_all('/^Set-Cookie:\\s*([^;]*)/mi', $request, $matches);
+            foreach ($matches[1] as $match) {
+                parse_str($match, $cookie);
+                $cookies = array_merge($cookies, $cookie);
+            }
+
+            // Check for errors
+            if (isset($cookies['myacinfo'])) {
+                // Success Login
+                $returnValue['success'] = true;
+                $returnValue['myacinfo'] = $cookies['myacinfo'];
+            } else {
+                $returnValue['success'] = false;
+                $returnValue['group_id'] = $group_id;
+            }
+        }
+
+        return $returnValue;
+    }
     /**
      * @desc Get your numbers phone
      * @param $scnt
@@ -92,7 +208,6 @@ class AppleAuthentication {
             $cookieDir,
             $fields
         );
-
 
 
         $returnValue['devices'] = StringHelper::getPhoneNumbers($request);
@@ -193,9 +308,16 @@ class AppleAuthentication {
 
         // Check for errors
         if (isset($cookies['myacinfo'])) {
+            foreach($cookies as $key => $str) {
+                if(strpos($key,'DES') !== false) {
+                    $returnValue['loginRememberKey'] = $key;
+                    $returnValue['loginRememberValue'] = $str;
+                }
+            }
             // Success Login
             $returnValue['success'] = true;
             $returnValue['cookies'] = $cookies;
+            $returnValue['myacinfo'] = $cookies['myacinfo'];
             // Create Json File And Save User Cookie
             $cookieJson =  CookiesHelper::getCookiesJson($email, $cookies);
         } else {
@@ -221,7 +343,6 @@ class AppleAuthentication {
             'profiles_development' => array(),
             'profile_downloaded' => false
         );
-
 
         // post json fields
         $fields = '{"includeInMigrationTeams":1}';

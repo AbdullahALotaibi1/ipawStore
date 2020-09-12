@@ -6,20 +6,16 @@ use Illuminate\Support\Facades\Storage;
 
 class RequestHelper {
 
-    public static function cURL($url = null, $cookies)
+    public static function cURL($url = null, $cookies = '')
     {
         // Initialize a cURL session
         $cURL = curl_init($url);
         // Setup the appropriate cookie handling
-        if($cookies != ''){
-            curl_setopt($cURL, CURLOPT_COOKIEFILE, $cookies);
-            curl_setopt($cURL, CURLOPT_COOKIEJAR, $cookies);
-        }
         // Return the cURL session
         return $cURL;
     }
 
-    public static function request($url, $cookies ,$fields = [], $headers = [], $followLocation = false,  $header = 0, $downloadDir = '', $teest = 1)
+    public static function request($url, $cookies = '',$fields = [], $headers = [],$followLocation = false,  $header = 0, $downloadDir = '', $ENCODING = 1, $cookie = '')
     {
         // Open new cURL session
         $cURL = self::cURL($url, $cookies);
@@ -33,13 +29,17 @@ class RequestHelper {
         // fields
         if($fields != null) {
             // Setup cURL session POST fields
+            if($cookie != '')
+            {
+                curl_setopt($cURL, CURLOPT_COOKIE, $cookie);
+            }
             curl_setopt($cURL,CURLOPT_POST, 1);
             curl_setopt($cURL, CURLOPT_POSTFIELDS, $fields);
         }
 
         // headers
         if($headers != null){
-            if($teest == 1){
+            if($ENCODING == 1){
                 curl_setopt($cURL, CURLOPT_ENCODING, "");
             }
             curl_setopt($cURL, CURLOPT_HTTPHEADER, $headers);

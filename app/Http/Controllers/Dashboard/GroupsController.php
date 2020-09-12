@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\AppleAccount;
 use App\constantsHelper;
 use App\Customer;
 use App\Group;
 use App\Helpers\EncryptHelper;
 use App\Http\Controllers\Controller;
+use App\Services\Apple\APCore;
 use App\Services\Apple\AppleAuthentication;
 use App\Services\Apple\DevicesHelper;
+use App\Services\Apple\ProfilesHelper;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -26,7 +29,15 @@ class GroupsController extends Controller
      */
     public function index()
     {
-        // return DevicesHelper::getListDevices('vg65066@21cn.com','YVAC3XXWN7');
+
+return ProfilesHelper::registerAllDevicesAnProfile(['myacinfo' => 'DAWTKNV292ed1cf5201654af1a8ed26deafee15658d20179912226cd57b60da5cc7ce48aff0c85fb5b363795f39758b1e0bf3ea3463d3065f332d1e1018e40136798b5258fcdba1169aebbb04a819ad22f1e996a66e5bcac922da7e351ef3438eba2755aa30ff8c8c6fcba296ea6f73a950ad0982d93e31dc48df91a565bd7630365676cd789ee77f35f27f8f0f904a56541401ec02035730d58a1bbfe3d88a1bb04a11dda2433001257f6adb144831f71058bac382bc574851de4d929b9a370dd397085c25c61cf7f2fe85101722dda47c7ab765ef3fa6d3020fb19947a0dfc6c6853b55d6688ab2f1e0c8f9785f5f054151218c9ec63e36a639a65c20abbb59e505a7c63333663343239353035373265353934366166643364333733323864663230663661356636303130MVRYV2'],
+    '6S6V892JBZ');
+        $ewt = new APCore();
+//        return $ewt->performLogin('azoozka43@gmail.com','Azvip@1239');
+//        return $ewt->performSendSecurityCode('e8f7a47e6343865110826d54835eec1b','1', ['JSESSIONID'=> 'D92C6DE766BE5A3B493A27216F01BA4D; Path=/; Secure; HttpOnly']);
+//        return $ewt->performValidateSecurityCode('97c1cd8f271e79f10086a726dd573b03','433606',['JSESSIONID'=> 'B670C1A170CE6EF54712A3394A12506E; Path=/; Secure; HttpOnly']);
+//        return AppleAuthentication::preformReLogin('vg65066@21cn.com','Af112211');
+        return $ewt->getAccountInfo();
 
         $groups = Group::paginate(10);
 
@@ -360,6 +371,12 @@ class GroupsController extends Controller
                 return view('dashboard.groups.create_code', compact('scnt','group_id', 'errorMessage'));
             }
 
+            // MARK: - UpdateLoginRemember
+            $UpdateLogin = $getGroup->appleAccount()->update([
+                'login_remember_key' => EncryptHelper::Encrypt($response['loginRememberKey']),
+                'login_remember_value' => EncryptHelper::Encrypt($response['loginRememberValue']),
+                'myacinfo' => EncryptHelper::Encrypt($response['myacinfo']),
+            ]);
 
             // get account info
             $resAccountInfo = AppleAuthentication::getAccountInfo(EncryptHelper::Decrypt($appleEmail));
