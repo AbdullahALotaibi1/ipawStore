@@ -1,6 +1,6 @@
 @extends('dashboard.layouts.app')
 
-@section('title','اضافة مجموعة')
+@section('title','التحقق من كود مصادقة الدخول')
 
 @section('content')
     <div class="container-fluid">
@@ -53,6 +53,8 @@
                         <input name="page_id" value="send_code" hidden>
                         <input name="scnt" value="{{ $scnt }}" hidden>
                         <input name="group_id" value="{{ $group_id }}" hidden>
+                        <input name="JSESSIONID" value="{{ $JSESSIONID }}" hidden>
+
                         <!-- Project name -->
                         <div class="form-group">
 

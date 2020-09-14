@@ -29,8 +29,11 @@ class IpaHelper {
                         @copy("zip://{$pathIPA}#{$path}", $iconPath);
                         break;
                 }elseif(stripos(pathinfo($path, PATHINFO_BASENAME), "AppIcon60x60@2x.png") !== false){
-                        @copy("zip://{$pathIPA}#{$path}", $iconPath);
-                        break;
+                    @copy("zip://{$pathIPA}#{$path}", $iconPath);
+                    break;
+                }elseif(stripos(pathinfo($path, PATHINFO_BASENAME), "60@2x.png") !== false){
+                    @copy("zip://{$pathIPA}#{$path}", $iconPath);
+                    break;
                 }
             }
         }

@@ -1,6 +1,6 @@
 @extends('dashboard.layouts.app')
 
-@section('title','اضافة مجموعة')
+@section('title','ارسال رسالة sms للمصادقة')
 
 @section('content')
     <div class="container-fluid">
@@ -43,6 +43,7 @@
                         <input name="page_id" value="select_devices" hidden>
                         <input name="scnt" value="{{ $scnt }}" hidden>
                         <input name="group_id" value="{{ $group_id }}" hidden>
+                        <input name="JSESSIONID" value="{{ $JSESSIONID }}" hidden>
                         <!-- Project name -->
                         <div class="form-group">
 

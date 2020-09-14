@@ -1,8 +1,11 @@
 <?php
 
 namespace App\Services\Apple;
+use App\Group;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 
 class APCore {
 
@@ -114,7 +117,7 @@ class APCore {
                 $returnValue['scnt'] = RequestHelper::getScntCode($body);
             }
             // MARK: - Two-Factor
-            if($toSMS == 1){
+            if($toSMS == 2){
                 return $this->performGetPhoneNumbers($returnValue['scnt'], $returnValue['cookies']);
             }
 
@@ -167,7 +170,6 @@ class APCore {
                     $JSSCookies = array_merge($JSSCookies, $cookie);
                     $returnValue['success'] = true;
                     $returnValue['cookies'] = $JSSCookies;
-                    return $this->performSendSecurityCode($returnValue['scnt'],'1', $JSSCookies);
                     return $returnValue;
                 }else{
                     return $returnValue;
@@ -302,7 +304,7 @@ class APCore {
         }
     }
 
-    public function getAccountInfo($cookie = [])
+    public function getAccountInfo($cookie = [], $group_id = 0)
     {
         $returnValue = ["success" => false];
         try {
@@ -336,7 +338,7 @@ class APCore {
 
             $resDevices = DevicesHelper::getListDevices($cookie, $jsonTeams['teams'][0]['teamId']);
             $resProfiles = ProfilesHelper::getListProfiles($cookie, $jsonTeams['teams'][0]['teamId']);
-            $resDownload = ProfilesHelper::downloadProvisioningProfile($cookie, $jsonTeams['teams'][0]['teamId'], $resProfiles['profile_id']);
+            $resDownload = ProfilesHelper::downloadProvisioningProfile($cookie, $jsonTeams['teams'][0]['teamId'], $resProfiles['profile_id'], $group_id);
 
             // prepare data
             $returnValue['success'] = true;
@@ -353,5 +355,57 @@ class APCore {
             return $returnValue;
         }
     }
+
+
+    public function downloadProfile($profileId, $teamID, $cookie = [], $group_id = 0)
+    {
+        if($group_id == 0){
+            $getFolderGroup = Group::where('team_id', '=', $teamID)->first()->folder;
+        }else{
+            $getFolderGroup = Group::where('id', '=', $group_id)->first()->folder;
+        }
+        if(!isset($getFolderGroup)){
+            return Redirect::route('dashboard.home');
+        }
+
+        $returnValue = ["success" => false];
+        try {
+            $cookieJar = CookieJar::fromArray($cookie != null ? $cookie : [], 'apple.com');
+            $this->client = new Client(['base_uri' => $this->listTeamBaseUrl]);
+            $response = $this->client->request(
+                "GET",
+                "ios/profile/downloadProfileContent",
+                [
+                    'query' => [
+                        'provisioningProfileId' => $profileId,
+                        'teamId' => $teamID,
+                    ],
+                    'verify' => true,
+                    'cookies' => $cookieJar,
+                    'headers' => [
+                        'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+                        'User-Agent' => $this->userAgent,
+                        'Accept-Language' => 'en-us',
+                    ],
+                    'allow_redirects' => false
+                ]
+            );
+
+            $dir ='private/store/_groups/'.$getFolderGroup.'/_files/profile.mobileprovision';
+            $download = Storage::put($dir, $response->getBody());
+
+            if(isset($download))
+            {
+                return "success_download";
+            }
+
+            return $returnValue;
+        } catch (RequestException $e) {
+            // Log exception here
+            $returnValue['errorMessage'] = $e->getMessage();
+            return $returnValue;
+        }
+    }
+
 
 }

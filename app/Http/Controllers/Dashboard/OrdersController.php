@@ -7,6 +7,7 @@ use App\Customer;
 use App\Group;
 use App\Helpers\EncryptHelper;
 use App\Http\Controllers\Controller;
+use App\Services\Apple\APCore;
 use App\Services\Apple\DevicesHelper;
 use App\Services\Apple\ProfilesHelper;
 use Illuminate\Http\Request;
@@ -37,9 +38,24 @@ class OrdersController extends Controller
 
                 // apple certificates info
                 $team_id = $getGroup->team_id;
-                $apple_email = EncryptHelper::Decrypt($getGroup->appleAccount()->first()->apple_email);
-                $response = DevicesHelper::validateDevices($apple_email, $team_id, $getCustomer->first()->udid, $getCustomer->first()->full_name);
 
+                // re-login apple developer
+                $appleAccount = $getGroup->appleAccount()->first();
+                $apple_email = EncryptHelper::Decrypt($appleAccount->apple_email);
+                $apple_password = EncryptHelper::Decrypt($appleAccount->apple_password);
+                $login_remember_key = EncryptHelper::Decrypt($appleAccount->login_remember_key);
+                $login_remember_value = EncryptHelper::Decrypt($appleAccount->login_remember_value);
+
+                $APCore = new APCore();
+                $loginResponse = $APCore->performLogin($apple_email, $apple_password, [''.$login_remember_key.'' => ''.$login_remember_value.'']);
+                if(isset($loginResponse['scnt']))
+                {
+                    return Response()->json([
+                        'success' => false,
+                        'message' => 'عليك تجديد تسجيل الدخول لحساب المطورين من خلال المجموعة'
+                    ]);
+                }
+                $response = DevicesHelper::validateDevices(['myacinfo' => $loginResponse['myacinfo']], $team_id, $getCustomer->first()->udid, $getCustomer->first()->full_name);
                 if(isset($response)){
                     if($response == 'success_download')
                     {

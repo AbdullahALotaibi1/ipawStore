@@ -189,9 +189,13 @@ class ProfilesHelper {
         }
     }
 
-    public static function downloadProvisioningProfile($cookie, $teamID, $provisioningProfileId)
+    public static function downloadProvisioningProfile($cookie, $teamID, $provisioningProfileId, $group_id = 0)
     {
-        $getFolderGroup = Group::where('team_id', '=', '8LX2F7QF9K')->first()->folder;
+        if($group_id == 0){
+            $getFolderGroup = Group::where('team_id', '=', $teamID)->first()->folder;
+        }else{
+            $getFolderGroup = Group::where('id', '=', $group_id)->first()->folder;
+        }
         if(!isset($getFolderGroup)){
             return Redirect::route('dashboard.home');
         }
@@ -205,7 +209,7 @@ class ProfilesHelper {
         );
 
         // headers
-        $headers[] = 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9';
+        $headers[] = '';
         $headers[] = 'Accept-Encoding: gzip, deflate, br';
         $headers[] = 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537';
         $headers[] = 'Accept-Language: ar,en-US;q=0.9,en;q=0.8';

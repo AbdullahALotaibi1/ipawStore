@@ -29,15 +29,13 @@ class GroupsController extends Controller
      */
     public function index()
     {
-
-return ProfilesHelper::registerAllDevicesAnProfile(['myacinfo' => 'DAWTKNV292ed1cf5201654af1a8ed26deafee15658d20179912226cd57b60da5cc7ce48aff0c85fb5b363795f39758b1e0bf3ea3463d3065f332d1e1018e40136798b5258fcdba1169aebbb04a819ad22f1e996a66e5bcac922da7e351ef3438eba2755aa30ff8c8c6fcba296ea6f73a950ad0982d93e31dc48df91a565bd7630365676cd789ee77f35f27f8f0f904a56541401ec02035730d58a1bbfe3d88a1bb04a11dda2433001257f6adb144831f71058bac382bc574851de4d929b9a370dd397085c25c61cf7f2fe85101722dda47c7ab765ef3fa6d3020fb19947a0dfc6c6853b55d6688ab2f1e0c8f9785f5f054151218c9ec63e36a639a65c20abbb59e505a7c63333663343239353035373265353934366166643364333733323864663230663661356636303130MVRYV2'],
-    '6S6V892JBZ');
         $ewt = new APCore();
+//        return $ewt->downloadProfile('9QARU83927','YVAC3XXWN7', ['myacinfo' => 'DAWTKNV2800c767db8c746116279ff79f7e8ca6ade47d2b991e5cfd0fde7d1ae61ce2829af8199d28e2d8a406d31f415d0036053f5d5142a82d1bbc3b29f7ed33fea9355b4df31afb13a2f68fd7bc8d8f75e6999cf2cc47e586ebd5df767a304c3ea71541beb8a4234e100ccb11862a5139120bb44bf7df46f12f5572ba0a56cbb22a247d8b2665f81ffc4967c687d4bc95e7ad6bfadd654fd9fb4026f60c7c7e66c45bc396eb915fee8f0d2fc783702e3024820b987a5fb6e4061fb3f666dd1b6f05ad6242434fd5b81e0f3ee68586152cb3850e779232313a366e530f419415b5b44115638621ae1846c448f30da9629e88c1b1dbb797a6ca5001d00e77e8ce8be121233366661653231636365656630333834373163623435313464353937626264346565323636366264MVRYV2']);
 //        return $ewt->performLogin('azoozka43@gmail.com','Azvip@1239');
 //        return $ewt->performSendSecurityCode('e8f7a47e6343865110826d54835eec1b','1', ['JSESSIONID'=> 'D92C6DE766BE5A3B493A27216F01BA4D; Path=/; Secure; HttpOnly']);
 //        return $ewt->performValidateSecurityCode('97c1cd8f271e79f10086a726dd573b03','433606',['JSESSIONID'=> 'B670C1A170CE6EF54712A3394A12506E; Path=/; Secure; HttpOnly']);
 //        return AppleAuthentication::preformReLogin('vg65066@21cn.com','Af112211');
-        return $ewt->getAccountInfo();
+//        return $ewt->getAccountInfo();
 
         $groups = Group::paginate(10);
 
@@ -97,9 +95,10 @@ return ProfilesHelper::registerAllDevicesAnProfile(['myacinfo' => 'DAWTKNV292ed1
             }
 
             // MARK: - Login with apple developer account
-            $response = AppleAuthentication::preformLogin($request->apple_email,$request->apple_password, $request->send_code);
-            // MARK: - Fail Login
+            $APCore = new APCore();
+            $response = $APCore->performLogin($request->apple_email, $request->apple_password, [], $request->send_code);
 
+            // MARK: - Fail Login
             if($response['success'] == false){
                 $appleMessage = $response['errorMessage'];
                 return redirect()->back()->with('appleMessage', $appleMessage)->withInput();
@@ -229,7 +228,8 @@ return ProfilesHelper::registerAllDevicesAnProfile(['myacinfo' => 'DAWTKNV292ed1
             $deleteCookies = File::deleteDirectory(storage_path('app/private/apple/cookies/'.$request->apple_email));
 
             // MARK: - Login with apple developer account
-            $response = AppleAuthentication::preformLogin($request->apple_email,$request->apple_password, $request->send_code);
+            $APCore = new APCore();
+            $response = $APCore->performLogin($request->apple_email, $request->apple_password, [], $request->send_code);
 
             // MARK: - Fail Login
             if($response['success'] == false){
@@ -333,20 +333,22 @@ return ProfilesHelper::registerAllDevicesAnProfile(['myacinfo' => 'DAWTKNV292ed1
     private function selectVerificationMethod($request, $response)
     {
         // MARK: - Check Found Scnt Code
-        if($response['scnt'] == '' || $response['scnt'] == null){
+        if($response['scnt'] == '' || $response['scnt'] == null && $response['cookies']['JSESSIONID'] == null){
             return Redirect::route('dashboard.groups.index');
         }
         $group_id = $request->group_id;
         // send code to desktop
         if($request->send_code == 1){
             $scnt = $response['scnt'];
-            return view('dashboard.groups.create_code', compact('scnt', 'group_id'));
+            $JSESSIONID = $response['cookies']['JSESSIONID'];
+            return view('dashboard.groups.create_code', compact('scnt', 'JSESSIONID', 'group_id'));
         }
         // send code to device
         else{
             $scnt = $response['scnt'];
+            $JSESSIONID = $response['cookies']['JSESSIONID'];
             $devices = $response['devices'];
-            return view('dashboard.groups.create_devices', compact('scnt', 'devices','group_id'));
+            return view('dashboard.groups.create_devices', compact('scnt', 'devices', 'group_id', 'JSESSIONID'));
         }
     }
 
@@ -357,18 +359,19 @@ return ProfilesHelper::registerAllDevicesAnProfile(['myacinfo' => 'DAWTKNV292ed1
         }
         // MARK: - Get Group Info
         $getGroup = Group::find($request->group_id);
-        // MARK: - Get Email Cookies
-        $appleEmail = $getGroup->appleAccount()->first()->apple_email;
+
         // MARK: - Check there is Account
         if($getGroup->count() != 0){
-            $response = AppleAuthentication::performValidateSecurityCode($request->scnt,$request->login_code,EncryptHelper::Decrypt($appleEmail));
+            $APCore = new APCore();
+            $JSESSIONID = $request->JSESSIONID;
+            $response = $APCore->performValidateSecurityCode($request->scnt, $request->login_code, ['JSESSIONID'=> $JSESSIONID]);//AppleAuthentication::performValidateSecurityCode(,,EncryptHelper::Decrypt($appleEmail));
 
             // Check if there errors or not
             if($response['success'] == false){
                 $errorMessage = $response['errorMessage'];
                 $scnt = $response['scnt'];
                 $group_id = $request->group_id;
-                return view('dashboard.groups.create_code', compact('scnt','group_id', 'errorMessage'));
+                return view('dashboard.groups.create_code', compact('scnt','group_id', 'errorMessage', 'JSESSIONID'));
             }
 
             // MARK: - UpdateLoginRemember
@@ -379,7 +382,7 @@ return ProfilesHelper::registerAllDevicesAnProfile(['myacinfo' => 'DAWTKNV292ed1
             ]);
 
             // get account info
-            $resAccountInfo = AppleAuthentication::getAccountInfo(EncryptHelper::Decrypt($appleEmail));
+            $resAccountInfo = $APCore->getAccountInfo(['myacinfo'=> $response['myacinfo']], $request->group_id);//AppleAuthentication::getAccountInfo(EncryptHelper::Decrypt($appleEmail));
             if($resAccountInfo['success'] == true){
 
                 // Convert timestamp to date
@@ -415,16 +418,16 @@ return ProfilesHelper::registerAllDevicesAnProfile(['myacinfo' => 'DAWTKNV292ed1
         }
         // MARK: - Get Group Info
         $getGroup = Group::find($request->group_id);
-        // MARK: - Get Email Cookies
-        $appleEmail = $getGroup->appleAccount()->first()->apple_email;
         // MARK: - Check there is Account
         if($getGroup->count() != 0){
-            $response = AppleAuthentication::performGetPhoneNumbers($request->scnt, EncryptHelper::Decrypt($appleEmail));
+            $APCore = new APCore();
+            $JSESSIONID = $request->JSESSIONID;
+            $response = $APCore->performGetPhoneNumbers($request->scnt, ['JSESSIONID'=> $JSESSIONID]);//AppleAuthentication::performGetPhoneNumbers(, EncryptHelper::Decrypt($appleEmail));
             if(isset($response['devices']) && $response['devices'] != null){
                 $devices = $response['devices'];
                 $scnt = $response['scnt'];
                 $group_id = $request->group_id;
-                return view('dashboard.groups.create_devices', compact('scnt', 'devices','group_id'));
+                return view('dashboard.groups.create_devices', compact('scnt', 'devices','group_id', 'JSESSIONID'));
             }
             return Redirect::route('dashboard.groups.index');
         }
@@ -439,14 +442,14 @@ return ProfilesHelper::registerAllDevicesAnProfile(['myacinfo' => 'DAWTKNV292ed1
         }
         // MARK: - Get Group Info
         $getGroup = Group::find($request->group_id);
-        // MARK: - Get Email Cookies
-        $appleEmail = $getGroup->appleAccount()->first()->apple_email;
         // MARK: - Check there is Account
         if($getGroup->count() != 0){
-            $response = AppleAuthentication::performSendSecurityCode($request->scnt,$request->device_id,EncryptHelper::Decrypt($appleEmail));
+            $APCore = new APCore();
+            $JSESSIONID = $request->JSESSIONID;
+            $response = $APCore->performSendSecurityCode($request->scnt,$request->device_id, ['JSESSIONID' => $JSESSIONID]);//AppleAuthentication::performSendSecurityCode(,EncryptHelper::Decrypt($appleEmail));
             $scnt = $response['scnt'];
             $group_id = $request->group_id;
-            return view('dashboard.groups.create_code', compact('scnt', 'group_id'));
+            return view('dashboard.groups.create_code', compact('scnt', 'group_id', 'JSESSIONID'));
         }
         return Redirect::route('dashboard.groups.index');
     }
