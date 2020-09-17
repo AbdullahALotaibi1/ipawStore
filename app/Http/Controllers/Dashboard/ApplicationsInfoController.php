@@ -196,7 +196,6 @@ class ApplicationsInfoController extends Controller
             // resign app
             $cmdLine = ConstantsHelper::SIGN_DIRECTION." -k ". $getFileP12 . ' -m ' . $getFileProfile . ' -o ' . $newFileIPA . ' -z 9 ' . $fileIPA;
             $returnValue['cmd'] = $cmdLine;
-            return $returnValue;
             $process = new Process($cmdLine);
             $process->run();
             $outPut = $process->getOutput();

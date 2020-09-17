@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use \Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +13,15 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// MARK: - Customers Route
+Route::post('customer/check/udid','APIs\CustomersAPIController@checkUDID');
+
+// MARK: - Applications Route
+Route::post('applications/last_added_apps','APIs\ApplicationsAPIController@lastAddedApps');
+Route::post('applications/random_apps','APIs\ApplicationsAPIController@randomApps');
+Route::post('applications/all_apps','APIs\ApplicationsAPIController@allApps');
+Route::get('applications/get_plist','APIs\ApplicationsAPIController@getPlist');
+Route::post('applications/resign_app/url','APIs\ApplicationsAPIController@resignAppOutUrl');
+Route::post('applications/resign_app','APIs\ApplicationsAPIController@resignApp');
+
+
