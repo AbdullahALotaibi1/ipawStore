@@ -20,7 +20,7 @@
 @yield('css')
 
     <!-- Title -->
-    <title>@yield('title') | iPaw Store</title>
+    <title>@yield('title') | {{ \App\Setting::all()->first()->title }}</title>
 
 </head>
 <body>

@@ -1,100 +1,91 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+<!doctype html>
+<html lang="ar">
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        <title>Laravel</title>
+    <!-- Libs CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/welcome/fonts/Feather/feather.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/welcome/libs/flickity/dist/flickity.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/welcome/libs/flickity-fade/flickity-fade.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/welcome/libs/aos/dist/aos.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/welcome/libs/jarallax/dist/jarallax.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/welcome/libs/highlightjs/styles/vs2015.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/welcome/libs/%40fancyapps/fancybox/dist/jquery.fancybox.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/welcome/fonts/fontawesome/css/all.min.css') }}">
 
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/welcome/css/theme.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/welcome/css/theme-rtl.css') }}">
 
-        <!-- Styles -->
-        <style>
-            html, body {
-                background-color: #fff;
-                color: #636b6f;
-                font-family: 'Nunito', sans-serif;
-                font-weight: 200;
-                height: 100vh;
-                margin: 0;
-            }
+    <title>{{ \App\Setting::all()->first()->title }}</title>
+</head>
+<body>
 
-            .full-height {
-                height: 100vh;
-            }
+<!-- NAVBAR
+   ================================================== -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+    <div class="container">
 
-            .flex-center {
-                align-items: center;
-                display: flex;
-                justify-content: center;
-            }
+        <!-- Brand -->
+        <a class="navbar-brand text-primary-desat" >
+            <img src="{{ asset('storage/images/logo/'. \App\Setting::all()->first()->logo_store.'') }}" style="width: 50px; height: 50px; border-radius: 7px;">
+        </a>
 
-            .position-ref {
-                position: relative;
-            }
+        <!-- Toggler -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-            .top-right {
-                position: absolute;
-                right: 10px;
-                top: 18px;
-            }
+        <!-- Collapse -->
+        <div class="collapse navbar-collapse" id="navbarCollapse">
 
-            .content {
-                text-align: center;
-            }
+            <!-- Toggler -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fe fe-x"></i>
+            </button>
 
-            .title {
-                font-size: 84px;
-            }
+            <!-- Navigation -->
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ \Illuminate\Support\Facades\URL::to('/storage/mobileconfig/download.mobileconfig') }}">
+                        تحميل المتجر
+                    </a>
+                </li>
 
-            .links > a {
-                color: #636b6f;
-                padding: 0 25px;
-                font-size: 13px;
-                font-weight: 600;
-                letter-spacing: .1rem;
-                text-decoration: none;
-                text-transform: uppercase;
-            }
-
-            .m-b-md {
-                margin-bottom: 30px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @auth
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ route('login') }}">Login</a>
-
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}">Register</a>
-                        @endif
-                    @endauth
-                </div>
-            @endif
-
-            <div class="content">
-                <div class="title m-b-md">
-                    Laravel
-                </div>
-
-                <div class="links">
-                    <a href="https://laravel.com/docs">Docs</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://blog.laravel.com">Blog</a>
-                    <a href="https://nova.laravel.com">Nova</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://vapor.laravel.com">Vapor</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
-                </div>
-            </div>
+            </ul>
         </div>
-    </body>
+
+    </div>
+</nav>
+
+@yield('content')
+
+<!-- JAVASCRIPT
+   ================================================== -->
+<!-- Libs JS -->
+<script src="{{ asset('assets/welcome/libs/jquery/dist/jquery.min.js') }}"></script>
+<script src="{{ asset('assets/welcome/libs/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('assets/welcome/libs/flickity/dist/flickity.pkgd.min.js') }}"></script>
+<script src="{{ asset('assets/welcome/libs/flickity-fade/flickity-fade.js') }}"></script>
+<script src="{{ asset('assets/welcome/libs/aos/dist/aos.js') }}"></script>
+<script src="{{ asset('assets/welcome/libs/smooth-scroll/dist/smooth-scroll.min.js') }}"></script>
+<script src="{{ asset('assets/welcome/libs/jarallax/dist/jarallax.min.js') }}"></script>
+<script src="{{ asset('assets/welcome/libs/jarallax/dist/jarallax-video.min.js') }}"></script>
+<script src="{{ asset('assets/welcome/libs/jarallax/dist/jarallax-element.min.js') }}"></script>
+<script src="{{ asset('assets/welcome/libs/typed.js/lib/typed.min.js') }}"></script>
+<script src="{{ asset('assets/welcome/libs/countup.js/dist/countUp.min.js') }}"></script>
+<script src="{{ asset('assets/welcome/libs/highlightjs/highlight.pack.min.js') }}"></script>
+<script src="{{ asset('assets/welcome/libs/%40fancyapps/fancybox/dist/jquery.fancybox.min.js') }}"></script>
+<script src="{{ asset('assets/welcome/libs/isotope-layout/dist/isotope.pkgd.min.js') }}"></script>
+<script src="{{ asset('assets/welcome/libs/imagesloaded/imagesloaded.pkgd.min.js') }}"></script>
+<script src="{{ asset('assets/welcome/fonts/fontawesome/js/all.min.js') }}"></script>
+
+<!-- Theme JS -->
+<script src="{{ asset('assets/welcome/js/theme.min.js') }}"></script>
+@yield('javascript')
+</body>
 </html>

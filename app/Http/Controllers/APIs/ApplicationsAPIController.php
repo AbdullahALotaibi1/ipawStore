@@ -10,6 +10,7 @@ use App\Group;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApplicationResource;
 use App\ResignApp;
+use App\Setting;
 use GuzzleHttp\Client;
 use http\Env\Response;
 use Illuminate\Http\Request;
@@ -28,12 +29,14 @@ class ApplicationsAPIController extends Controller
 
         if($customer['success'] == true)
         {
+            $settingAppBundle = Setting::all()->first()->app_bundle;
             // MARK:- GET Last Added Apps
             $customerGroup = Customer::where('udid', '=', $request->udid)->first()->group_id;
-            $appsByGroupID = Application::where('group_id', '=', $customerGroup)->orderBy('created_at', 'DESC')->take(10)->get();
+            $appStoreID = ApplicationsInfo::where('app_bundle', '=', $settingAppBundle)->first();
+            $appsByGroupID = Application::where('group_id', '=', $customerGroup)->where('app_info_id', '!=', $appStoreID)->orderBy('created_at', 'DESC')->take(10)->get();
 
             return response()->json([
-                'customer' => $customer,
+                'success' => $customer['success'],
                 'data' => ApplicationResource::collection($appsByGroupID),
             ]);
 
@@ -47,12 +50,14 @@ class ApplicationsAPIController extends Controller
 
         if($customer['success'] == true)
         {
+            $settingAppBundle = Setting::all()->first()->app_bundle;
             // MARK:- GET Last Added Apps
             $customerGroup = Customer::where('udid', '=', $request->udid)->first()->group_id;
-            $randomApps = Application::where('group_id', '=', $customerGroup)->orderBy(DB::raw('RAND()'))->take(10)->get();
+            $appStoreID = ApplicationsInfo::where('app_bundle', '=', $settingAppBundle)->first();
+            $randomApps = Application::where('group_id', '=', $customerGroup)->where('app_info_id', '!=', $appStoreID)->orderBy(DB::raw('RAND()'))->take(10)->get();
 
             return response()->json([
-                'customer' => $customer,
+                'success' => $customer['success'],
                 'data' => ApplicationResource::collection($randomApps),
             ]);
 
@@ -68,9 +73,11 @@ class ApplicationsAPIController extends Controller
         {
             // MARK:- GET Last Added Apps
             $allApps = [];
+            $settingAppBundle = Setting::all()->first()->app_bundle;
+            // MARK:- GET Last Added Apps
             $customerGroup = Customer::where('udid', '=', $request->udid)->first()->group_id;
             $appsByGroup = Application::where('group_id', '=', $customerGroup)->get();
-            $allAppsInfo = ApplicationsInfo::orderBy('app_arrangement', 'ASC')->get();
+            $allAppsInfo = ApplicationsInfo::where('app_bundle', '!=', $settingAppBundle)->orderBy('app_arrangement', 'ASC')->get();
 
             foreach ($allAppsInfo as $appInfo){
                 foreach ($appsByGroup as $apps)
@@ -82,7 +89,7 @@ class ApplicationsAPIController extends Controller
             }
 
             return response()->json([
-                'customer' => $customer,
+                'success' => $customer['success'],
                 'data' => ApplicationResource::collection($allApps),
             ]);
 
@@ -91,40 +98,45 @@ class ApplicationsAPIController extends Controller
         }
     }
 
-    public function getPlist()
+    public function getPlist($id, $udid, $encudid, $ipaURL = "")
     {
-        $accessKey = request()->header('ipaw_store_access_key');
-        $udid = request()->header('ipaw_store_customer_udid');
-        $appID = request()->header('ipaw_store_app_id');
+        $accessKey = $encudid;
+        $appID = $id;
 
         $encryptedUDID = hash('sha256', $udid);
         // Check AccessKey
-        if($accessKey == $encryptedUDID)
-        {
+        if($accessKey == $encryptedUDID) {
             $customerGroup = Customer::where('udid', '=', $udid);
-            if($customerGroup->count() != 0)
-            {
-            $groupFolder = $customerGroup->first()->groups->folder;
-            $appByGroup = Application::where('group_id', '=', $customerGroup->first()->group_id)->where('id', '=', $appID)->first();
-            $allAppsInfo = $appByGroup->applicationsInfo;
-
-            $appIpa = URL::to('/').'/storage/store/_groups/'.$groupFolder.'/'.$appByGroup->app_ipa;
-            $appIcon =  URL::to('/').'/storage/store/_icon/'.$allAppsInfo->app_icon;
-            $appBundle = $allAppsInfo->app_bundle;
-            $appVersion = $allAppsInfo->app_version;
-            $appName = $allAppsInfo->app_name;
-            return view('api.plist.manifest', compact('appIpa','appIcon','appBundle','appVersion','appName'));
-            }else{
+            if ($customerGroup->count() != 0) {
+                $groupFolder = $customerGroup->first()->groups->folder;
+                if($ipaURL != ''){
+                    $appIpa = URL::to('/') . '/storage/store/_groups/' . $groupFolder . '/' . $customerGroup->first()->id .'/'. $ipaURL;
+                    $appIcon = URL::to('/') . '/storage/store/_groups/' . $groupFolder . '/' . $customerGroup->first()->id .'/'. $ipaURL.'.png';
+                    $appBundle = 'com.abdullah.'.$this->randomBundle(8).'';
+                    $appVersion = '1.0';
+                    $appName = 'تطبيق خارجي';
+                    return view('api.plist.manifest', compact('appIpa', 'appIcon', 'appBundle', 'appVersion', 'appName'));
+                }else{
+                    $appByGroup = Application::where('group_id', '=', $customerGroup->first()->group_id)->where('id', '=', $appID)->first();
+                    $allAppsInfo = $appByGroup->applicationsInfo;
+                    $appIpa = URL::to('/') . '/storage/store/_groups/' . $groupFolder . '/' . $appByGroup->app_ipa;
+                    $appIcon = URL::to('/') . '/storage/store/_icon/' . $allAppsInfo->app_icon;
+                    $appBundle = $allAppsInfo->app_bundle;
+                    $appVersion = $allAppsInfo->app_version;
+                    $appName = $allAppsInfo->app_name;
+                    return view('api.plist.manifest', compact('appIpa', 'appIcon', 'appBundle', 'appVersion', 'appName'));
+                }
+            } else {
                 return array(
                     'success' => false,
                     'message' => 'رقم الجهاز غير معروف او ليس مسجل في قواعد البيانات'
                 );
             }
         }else{
-            return array(
-                'success' => false,
-                'message' => 'ليس لديك صلاحيات للوصول للمعلومات.'
-            );
+            return response()->json([
+                'message' =>  'حدث خطاء غير متوقع.',
+                'success' => false
+            ]);
         }
 
     }
@@ -144,7 +156,10 @@ class ApplicationsAPIController extends Controller
                 $groupFolder = 'public/store/_groups/'.$getGroups['folder'];
                 $FolderResignCustomer = 'app/'.$groupFolder.'/'.$customerGroup->id.'/resign/';
                 // resign app
-                $result = File::makeDirectory(storage_path($FolderResignCustomer), 0775, true);
+                if(!File::exists(storage_path($FolderResignCustomer))){
+                    $result = File::makeDirectory(storage_path($FolderResignCustomer), 0775, true);
+                }
+
                 $getPrivateGroupFolder = storage_path('app/private/store/_groups/'.$getGroups['folder']);
                 $getFileP12 = $getPrivateGroupFolder.'/_files/'.$getGroups->appleFiles()->where('file_extension', '=', 'p12')->get()[0]['file_name'].'.p12';
                 $getFileProfile = $getPrivateGroupFolder.'/_files/profile.mobileprovision';
@@ -168,7 +183,7 @@ class ApplicationsAPIController extends Controller
                     File::delete($fileIPA);
                     return response()->json([
                         'message' =>  'تم توقيع التطبيق',
-                        'resign_id' =>  $create->id,
+                        'resign_ipa' =>  $ipaRandomName,
                         'resign_app' => true
                     ]);
                 }else{
@@ -227,6 +242,7 @@ class ApplicationsAPIController extends Controller
                 File::makeDirectory(storage_path($FolderResignCustomer), 0775, true);
             }
 
+            $urlIPA = [];
             for ($x = 1; $x <= $request->duplicate_num; $x++)
             {
                 // App Info
@@ -254,6 +270,8 @@ class ApplicationsAPIController extends Controller
                     'app_bundle' => $appBundle,
                     'app_ipa' => $ipaRandomName,
                 ]);
+
+                $urlIPA[] = $ipaRandomName;
             }
 
             if(isset($create))
@@ -262,6 +280,7 @@ class ApplicationsAPIController extends Controller
                     'message' =>  'تم تكرار التطبيق وتوقيعة',
                     'resign_bundle' =>  $request->app_bundle == '' ? $getApplicationsInfo->app_bundle : $request->app_bundle,
                     'resign_dub_num' =>  $request->duplicate_num,
+                    'url_ipa' => $urlIPA,
                     'resign_app' => true
                 ]);
             }else{
@@ -272,6 +291,10 @@ class ApplicationsAPIController extends Controller
             }
 
         }
+    }
+
+    function randomBundle($length=4){
+        return substr(str_shuffle("qwertyuiopasdfghjklzxcvbnm"),0,$length);
     }
 }
 

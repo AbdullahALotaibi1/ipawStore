@@ -12,7 +12,7 @@ use \Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('dashboard')->name('dashboard.')->group(function(){
+Route::prefix('dashboard')->middleware('auth')->name('dashboard.')->group(function(){
 
     Route::get('/', 'HomeController@index')->name('home');
     Route::resource('/users', 'UsersController');
@@ -50,6 +50,15 @@ Route::prefix('dashboard')->name('dashboard.')->group(function(){
     // MARK: - BankAccounts Route
     Route::resource('/bank/accounts', 'BankAccountsController');
     Route::post('/bank/accounts/ajax/delete', 'BankAccountsController@deleteAjax')->name('accounts.ajax.delete');
+
+    // MARK: - settings Route
+    Route::get('/settings', 'SettingsController@index')->name('settings.index');
+    Route::post('/settings', 'SettingsController@update')->name('settings.update');
+
+    // MARK: - Active Code Route
+    Route::get('/active/code', 'ActiveCodeController@index')->name('active.code.index');
+    Route::post('/active/code/create', 'ActiveCodeController@create')->name('active.code.create');
+    Route::post('/active/code/ajax/delete', 'ActiveCodeController@deleteAjax')->name('active.code.ajax.delete');
 
 
 });

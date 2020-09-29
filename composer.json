@@ -13,11 +13,13 @@
         "guzzlehttp/guzzle": "^7.0",
         "laravel/framework": "^6.18.35",
         "laravel/tinker": "^2.0",
+        "mews/captcha": "^3.2",
         "rodneyrehm/plist": "*"
     },
     "require-dev": {
         "facade/ignition": "^1.4",
         "fzaninotto/faker": "^1.9.1",
+        "laravel/ui": "^1.0",
         "mockery/mockery": "^1.0",
         "nunomaduro/collision": "^3.0",
         "phpunit/phpunit": "^8.0"

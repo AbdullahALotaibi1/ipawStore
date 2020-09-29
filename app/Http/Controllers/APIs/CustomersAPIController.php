@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\APIs;
 
+use App\ConstantsHelper;
 use App\Http\Controllers\Controller;
 use App\customer;
 use Illuminate\Http\Request;
@@ -16,9 +17,12 @@ class CustomersAPIController extends Controller
 
    public static function checkCustomer($request)
    {
-       $accessKey = request()->header('ipaw_store_access_key');
+//       $accessKey = request()->header('ipaw_store_access_key');
        $customerUDID = $request->udid;
+       $accessKey = $request->ipaw_store_access_key;
        $encryptedUDID = hash('sha256', $customerUDID);
+
+
        // Check AccessKey
        if($accessKey == $encryptedUDID)
        {
@@ -26,13 +30,30 @@ class CustomersAPIController extends Controller
            $customer = Customer::where('udid', '=', $customerUDID);
            if($customer->count() != 0)
            {
-               $groupName = $customer->first()->groups->name;
-               return array(
-                   'success' => true,
-                   'full_name' => $customer->first()->full_name,
-                   'group_name' => $groupName,
-                   'message' => 'تم التحقق من المشترك',
-               );
+               if ($customer->first()->status == ConstantsHelper::ACTIVE_CUSTOMER){
+                   $groupName = $customer->first()->groups->name;
+                   return array(
+                       'success' => true,
+                       'full_name' => $customer->first()->full_name,
+                       'group_name' => $groupName,
+                       'message' => 'تم التحقق من المشترك',
+                   );
+               }elseif($customer->first()->status == ConstantsHelper::DISABLED_CUSTOMER){
+                   return array(
+                       'success' => false,
+                       'message' => 'عزيز المشترك حسابك معلق الرجاء التواصل مع صاحب السكربت'
+                   );
+               }elseif($customer->first()->status == ConstantsHelper::NEED_UPDATE_PROFILE_CUSTOMER){
+                   return array(
+                       'success' => false,
+                       'message' => 'عزيز المشترك حسابك بحاجة لتحديث البيانات الرجاء التواصل مع صاحب السكربت'
+                   );
+               } else {
+                   return array(
+                       'success' => false,
+                       'message' => 'الرجاء التواصل مع صاحب السكربت'
+                   );
+               }
 
            }else{
                return array(

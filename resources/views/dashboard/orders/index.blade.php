@@ -21,9 +21,7 @@
                 </div>
             </div> <!-- / .row -->
         </div>
-
         <br>
-
 
         <! ============ Static
         =====================>
@@ -101,6 +99,11 @@
                             </a>
                         </th>
                         <th>
+                            <a href="#" class="text-muted list-sort" >
+                                كود الاشتراك
+                            </a>
+                        </th>
+                        <th>
                             <a href="#" class="text-muted list-sort">
                                 حالة الطلب
                             </a>
@@ -134,6 +137,9 @@
                             </td>
                             <td class="">
                                 {{ $order['device_model'] }}
+                            </td>
+                            <td class="">
+                                {{ $order['register_coupon'] != '' ? $order['register_coupon'] : '—' }}
                             </td>
                             <td class="">
                                 <!-- Badge -->

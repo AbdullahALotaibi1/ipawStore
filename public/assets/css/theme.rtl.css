@@ -353,3 +353,35 @@ a.wp-link:hover {
     width: 40px;
     border-radius: 5px;
 }
+
+
+.ql-editor.ql-blank::before {
+    text-align: right;
+    top: .5rem;
+    left: .75rem;
+    font-style: normal;
+    color: #b1c2d9;
+    font-family: "DIN Next LT Arabic Regular";
+}
+
+
+.ql-editor > * {
+    cursor: text;
+    direction: rtl !IMPORTANT;
+    text-align: right !IMPORTANT;
+}
+
+.ql-editor ol, .ql-editor ul {
+    padding-left: 0 !IMPORTANT;
+    padding-right: 1.5em !IMPORTANT;
+}
+
+.ql-editor ol li:not(.ql-direction-rtl), .ql-editor ul li:not(.ql-direction-rtl) {
+    padding-left: 0 !IMPORTANT;
+    padding-right: 1.5em !IMPORTANT;
+}
+.ql-editor li:not(.ql-direction-rtl)::before {
+    margin-left: 0.3em;
+    margin-right: -1.5em;
+    text-align: left;
+}

@@ -7,6 +7,7 @@ use App\Customer;
 use App\Group;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 
 class CustomersController extends Controller
@@ -32,6 +33,10 @@ class CustomersController extends Controller
     public function edit(Customer $customer)
     {
         return view('dashboard.customers.edit', compact('customer'));
+    }
+
+    public function show(Customer $customer)
+    {
     }
 
     /**
@@ -69,6 +74,7 @@ class CustomersController extends Controller
             'phone_number.integer' => 'الرجاء ادخال رقم الجوال بطريقة 966555555555'
         ]);
 
+        return Redirect::route('dashboard.customers.index');
     }
 
     public function deleteAjax(Request $request)

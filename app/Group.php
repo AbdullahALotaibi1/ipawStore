@@ -71,4 +71,9 @@ class Group extends Model
         return $this->hasMany(Customer::class);
     }
 
+    function applications()
+    {
+        return $this->hasOne(Application::class);
+    }
+
 }

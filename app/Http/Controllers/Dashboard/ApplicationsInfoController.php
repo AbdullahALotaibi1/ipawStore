@@ -198,6 +198,8 @@ class ApplicationsInfoController extends Controller
             $returnValue['cmd'] = $cmdLine;
             $process = new Process($cmdLine);
             $process->run();
+            $process->setTimeout(null);
+            $process->setIdleTimeout(null);
             $outPut = $process->getOutput();
 
             if(isset($outPut)){
@@ -209,10 +211,9 @@ class ApplicationsInfoController extends Controller
                 $returnValue['success'] = true;
                 $returnValue['message'] = 'تم توقيع تطبيق ('.$getApp->app_name.') على كل مجموعات المتاحة';
                 $returnValue['cmd'] = $cmdLine;
-                return $returnValue;
             }
-            return $returnValue;
         }
+        return $returnValue;
     }
 
     public function getListApp(Request $request)
@@ -321,5 +322,11 @@ class ApplicationsInfoController extends Controller
         }
 
         return $bytes;
+    }
+
+
+    public function downloadStore(Request $request)
+    {
+
     }
 }

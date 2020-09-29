@@ -2,7 +2,7 @@
 
 @extends('dashboard.layouts.app')
 
-@section('title','اضافة مجموعة')
+@section('title',' تعديل - '. $customer->full_name .' ')
 
 @section('content')
     <div class="container-fluid">

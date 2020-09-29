@@ -24,4 +24,6 @@ class Application extends Model
     {
         return $this->belongsTo(ApplicationsInfo::class, 'app_info_id', 'id');
     }
+
+
 }

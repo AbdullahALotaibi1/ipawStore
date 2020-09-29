@@ -19,6 +19,7 @@ class ApplicationsInfo extends Model
     ];
 
 
+
     // MARK: - Group Functions
     function getLastUpdate()
     {

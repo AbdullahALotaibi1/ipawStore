@@ -1,8 +1,6 @@
-
-
 @extends('dashboard.layouts.app')
 
-@section('title','اضافة مجموعة')
+@section('title','  تعديل - '.$app->app_name.'')
 
 @section('content')
     <div class="container-fluid">

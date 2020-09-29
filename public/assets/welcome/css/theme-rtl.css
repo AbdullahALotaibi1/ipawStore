@@ -1,0 +1,128 @@
+/* RTL Code */
+
+/* FONT */
+@font-face {
+    font-family: "DIN Next LT Arabic Regular";
+    src: url("../fonts/din-next-lt/din-next-lt-w23-regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: "DIN Next LT Arabic Medium";
+    src: url("../fonts/din-next-lt/din-next-lt-w23-medium.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: "DIN Next LT Arabic Heavy";
+    src: url("../fonts/din-next-lt/DINNextLTArabic-Heavy-1.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    font-family: "DIN Next LT Arabic Regular";
+}
+
+.navbar-light .navbar-brand {
+    font-family: "DIN Next LT Arabic Heavy";
+}
+
+.navbar {
+    direction: rtl;
+}
+
+.navbar-light .navbar-nav .nav-link {
+    font-family: "DIN Next LT Arabic Regular";
+    color: #555;
+    font-size: 16px;
+}
+.navbar-light .navbar-nav .nav-link:focus, .navbar-light .navbar-nav .nav-link:hover {
+    color: #335eea;
+}
+li.nav-item {
+    margin-right: -20px;
+}
+
+.navbar-btn.btn{
+    margin-right: 20px;
+    font-size: 15px;
+}
+
+.btn {
+    font-family: "DIN Next LT Arabic Regular";
+    direction: rtl;
+}
+
+h1.display-2{
+    font-family: "DIN Next LT Arabic Medium";
+    font-size: 38px;
+}
+
+p.lead {
+    font-family: "DIN Next LT Arabic Regular";
+    font-size: 18px;
+}
+.ml-3, .mx-3 {
+    margin-left: 0px!important;
+    margin-right: .75rem!important;
+}
+
+.rtl-text{
+    direction: rtl;
+    text-align: right;
+    font-family: "DIN Next LT Arabic Regular";
+
+}
+
+.align-items-center {
+    direction: rtl;
+}
+
+.font-arabic-text{
+    font-family: "DIN Next LT Arabic Regular";
+    direction: rtl !important;
+}
+
+.icon  {
+    font-size: 45px;
+    margin-top: -17px;
+}
+
+.border-gray-800-50 {
+    border: 0px;
+}
+
+.ql-editor > * {
+    font-family: "DIN Next LT Arabic Regular";
+}
+
+section.bg-dark.section-rtl {
+    direction: rtl !important;
+    text-align: right !important;
+    font-family: "DIN Next LT Arabic Regular";
+}
+.list-unstyled {
+    padding-right: 0px;
+    list-style: none;
+}
+.card-header {
+    padding: 1rem 2rem;
+    margin-bottom: 0;
+    background-color: rgb(255 255 255 / 3%);
+    border-bottom: 1px solid #f1f4f8;
+}
+
+@media (min-width: 380px){
+    .mt-md-n6, .my-md-n6 {
+        margin-top: -3rem!important;
+    }
+}
+
+.form-group small {
+    display: block;
+    margin-top: -5px;
+    margin-bottom: 5px;
+    font-size: 13px;
+    color: #5c6b82;
+}

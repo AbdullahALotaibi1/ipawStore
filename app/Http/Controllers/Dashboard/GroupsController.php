@@ -2,17 +2,12 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\AppleAccount;
-use App\constantsHelper;
+use App\ConstantsHelper;
 use App\Customer;
 use App\Group;
 use App\Helpers\EncryptHelper;
 use App\Http\Controllers\Controller;
 use App\Services\Apple\APCore;
-use App\Services\Apple\AppleAuthentication;
-use App\Services\Apple\DevicesHelper;
-use App\Services\Apple\ProfilesHelper;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Redirect;
